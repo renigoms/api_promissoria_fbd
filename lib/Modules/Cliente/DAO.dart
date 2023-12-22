@@ -53,23 +53,25 @@ class DAOClientes implements DAOUtilsI {
     }
   }
 
+  String _getValUpdate(var oldValue, var newValue)=> newValue ?? oldValue;
+
   Future<bool> updateCliente(Cliente cliente) async{
     try{
       if (cliente.id == null) throw IDException();
       List oldCliente = await getByID(cliente.id.toString());
 
       String id = cliente.id.toString(),
-          nome_completo = cliente.nome_completo == null ?
-          oldCliente[0]['nome_completo'] : cliente.nome_completo,
-          cpf = cliente.cpf == null ?
-              oldCliente[0]['cpf']:cliente.cpf,
-          email = cliente.email == null ?
-          oldCliente[0]['email']: cliente.email,
-          telefone = cliente.telefone==null ?
-              oldCliente[0]['telefone']:cliente.telefone;
+          nomeCompleto = _getValUpdate(oldCliente[0]['nome_completo'],
+              cliente.nome_completo),
+
+          cpf = _getValUpdate(oldCliente[0]['cpf'], cliente.cpf),
+
+          email = _getValUpdate(oldCliente[0]['email'], cliente.email),
+
+          telefone = _getValUpdate(oldCliente[0]['telefone'], cliente.telefone);
       
       final query = sprintf(SQLCliente.UPDATE,
-          [nome_completo, cpf, email, telefone, id]);
+          [nomeCompleto, cpf, email, telefone, id]);
       return await Cursor.execute(query);
     }on IDException{
       rethrow;
