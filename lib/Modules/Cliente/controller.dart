@@ -78,10 +78,6 @@ class ClienteHandlerController implements ServerUtils {
         return Response.badRequest(
           body: "O id deve ser passado junto com os dados que serão alterados"
         );
-      }on CPFException{
-        return Response.badRequest(
-          body: "Você não pode alterar o cpf!"
-        );
       }
     });
 
