@@ -19,7 +19,7 @@ abstract class SQLCliente {
           " $_CPF, $_EMAIL, $_TELEFONE) VALUES ('%s','%s','%s','%s');",
 
       UPDATE = "UPDATE $NOMETABELA "
-          "SET $_NOMECOMPLETO='%s', $_EMAIL = '%s', $_TELEFONE = '%s' "
+          "SET $_NOMECOMPLETO='%s', $_CPF = '%s',  $_EMAIL = '%s', $_TELEFONE = '%s' "
           "WHERE ${SQLGeral.id} = %s",
 
       DELETE = "DELETE FROM $NOMETABELA WHERE ${SQLGeral.id} = %s;";

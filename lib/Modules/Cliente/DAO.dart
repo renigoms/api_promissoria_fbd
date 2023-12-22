@@ -56,26 +56,26 @@ class DAOClientes implements DAOUtilsI {
   Future<bool> updateCliente(Cliente cliente) async{
     try{
       if (cliente.id == null) throw IDException();
-      if (cliente.cpf != null) throw CPFException();
       List oldCliente = await getByID(cliente.id.toString());
 
       String id = cliente.id.toString(),
           nome_completo = cliente.nome_completo == null ?
           oldCliente[0]['nome_completo'] : cliente.nome_completo,
+          cpf = cliente.cpf == null ?
+              oldCliente[0]['cpf']:cliente.cpf,
           email = cliente.email == null ?
           oldCliente[0]['email']: cliente.email,
           telefone = cliente.telefone==null ?
               oldCliente[0]['telefone']:cliente.telefone;
       
       final query = sprintf(SQLCliente.UPDATE,
-          [nome_completo, email, telefone, id]);
+          [nome_completo, cpf, email, telefone, id]);
       return await Cursor.execute(query);
     }on IDException{
       rethrow;
-    }on CPFException{
-      rethrow;
-    }catch(e){
+    }catch(e, s){
       print("Erro durante o update, $e");
+      print(s);
       return false;
     }
   }
