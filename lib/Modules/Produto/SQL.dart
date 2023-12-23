@@ -23,5 +23,7 @@ class SQLProduto {
           "VALUES ('%s', '%s', %s);",
 
       UPDATE = "UPDATE $NAME_TABLE SET $_NAME = '%s', $_UNID_MEDIDA = '%s',"
-          "$_VALOR_UNIT = %s, $_PORCENT_LUCRO = %s WHERE ${SQLGeral.id} = %s;";
+          "$_VALOR_UNIT = %s, $_PORCENT_LUCRO = %s WHERE ${SQLGeral.id} = %s;",
+
+      DELETE = "DELETE FROM $NAME_TABLE WHERE ${SQLGeral.id} = %s;";
 }

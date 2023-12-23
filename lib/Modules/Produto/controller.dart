@@ -54,6 +54,18 @@ class ProdutoControllerHandler implements ServerUtils {
       }
     });
 
+    route.delete("/<id>", (Request request, String id) async{
+      try{
+        return await DAOProduto().deleteProduto(id) ?
+            Response.ok("Produto deletado com sucesso!"):
+            Response.internalServerError(body: "Tentativa de delete falhou!");
+      }on IDException{
+        return Response.badRequest(
+        body: "Você precisa fornecer o ID do produto que quer deletar!"
+        );
+      }
+    });
+
     return route;
   }
 }
