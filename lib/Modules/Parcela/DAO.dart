@@ -3,9 +3,8 @@ import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 
 class DAOParcela implements DAOUtilsI{
   @override
-  String createTable() {
-    return SQLParcela.CREATE_TABLE;
-  }
+  String createTable() => SQLParcela.CREATE_TABLE;
+
 
   @override
   Future<List<Map<String, dynamic>>> getAll() {
