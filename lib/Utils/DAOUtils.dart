@@ -18,4 +18,6 @@ abstract class UtilsGeral{
     }
     return false;
   }
+
+  static dynamic getValUpdate(var oldValue, var newValue) => newValue ?? oldValue;
 }

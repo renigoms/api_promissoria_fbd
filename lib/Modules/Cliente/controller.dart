@@ -10,83 +10,53 @@ import 'package:sistema_promissorias/Utils/ServerUtilsI.dart';
 import 'model.dart';
 
 class ClienteHandlerController implements ServerUtils {
-  Map<String,dynamic> _dadosReqMap(String strReq) => jsonDecode(strReq);
   Router get router {
     final router = Router();
 
     router.get('/', (Request request) async {
-      try {
-        final listMap = await DAOClientes().getAll();
-        return Response.ok(jsonEncode(listMap));
-      } catch (e) {
-        return Response.forbidden("Erro, ${e.toString()}");
-      }
+      return ResponseUtils.getResponse(await DAOClientes().getAll());
     });
 
     router.get("/<id>", (Request request, String id) async {
-      try {
-        return Response.ok(jsonEncode(await DAOClientes().getByID(id)));
-      } catch (e) {
-        return Response.internalServerError(
-            body: "Erro ao buscar por id, ${e.toString()}");
-      }
+      return ResponseUtils.getResponse(await DAOClientes().getByID(id));
     });
 
-    router.get("/cpf/<cpf>",
-        (Request request, String cpf) async {
-      try {
-        return Response.ok(
-            jsonEncode(await DAOClientes().getByName(cpf)));
-      } catch (e) {
-        return Response.internalServerError(
-            body: "Erro ao buscar por nome, ${e.toString()}");
-      }
+    router.get("/cpf/<cpf>", (Request request, String cpf) async {
+      return ResponseUtils.getResponse(await DAOClientes().getByName(cpf));
     });
 
     router.post('/', (Request request) async {
-
-      try{
-        return await DAOClientes().
-        postCreateCliente(
-            Cliente.byMap(
-                _dadosReqMap(
-                    await request.readAsString()
-                )
-            )
-        ) ? Response.ok("Cliente cadastrado com sucesso!")
+      try {
+        return await DAOClientes().postCreateCliente(Cliente.byMap(
+                ResponseUtils.dadosReqMap(await request.readAsString())))
+            ? Response.ok("Cliente cadastrado com sucesso!")
             : Response.internalServerError(
-            body: "Erro durante o cadastro detectado!");
-      }on PostgreSQLException{
+                body: "Erro durante o cadastro detectado!");
+      } on PostgreSQLException {
         return Response.badRequest(
-          body: "Opa, Já existe um cliente com o mesmo CPF que o seu!"
-        );
+            body: "Opa, Já existe um cliente com o mesmo CPF que o seu!");
       }
     });
 
     router.put("/", (Request request) async {
-      try{
-        return await DAOClientes().updateCliente(
-            Cliente.byMap(
-                _dadosReqMap(
-                    await request.readAsString()
-                )
-            )
-        )?
-        Response.ok("Updates realizados com sucesso!"):
-        Response.internalServerError(body: "Falha no update!");
-      }on IDException{
+      try {
+        return await DAOClientes().putUpdateCliente(Cliente.byMap(
+                ResponseUtils.dadosReqMap(await request.readAsString())))
+            ? Response.ok("Updates realizados com sucesso!")
+            : Response.internalServerError(body: "Falha no update!");
+      } on IDException {
         return Response.badRequest(
-          body: "O id deve ser passado junto com os dados que serão alterados"
-        );
+            body:
+                "O id deve ser passado junto com os dados que serão alterados");
       }
     });
 
     router.delete("/<id>", (Request request, String id) async {
-      try{
-        return await DAOClientes().deleteCliente(id) ?
-        Response.ok("Cliente deletado com sucesso!"):
-            Response.internalServerError(body: "Tentativa de delete falhou!");
-      }on IDException{
+      try {
+        return await DAOClientes().deleteCliente(id)
+            ? Response.ok("Cliente deletado com sucesso!")
+            : Response.internalServerError(body: "Tentativa de delete falhou!");
+      } on IDException {
         return Response.badRequest(
             body: "Você precisa fornecer o ID do cliente que quer deletar");
       }
