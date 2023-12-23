@@ -3,37 +3,54 @@ import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 
 class Produto {
   int?id;
-  String nome, uni_med;
-  double valor_unit, porc_lucro;
+  String ? nome, unid_medida;
+  double ? valor_unit, porc_lucro;
 
   Produto({
     this.id,
     required this.nome,
-    required this.uni_med,
+    required this.unid_medida,
     required this.valor_unit,
     required this.porc_lucro
   });
 
-  factory Produto.bymap(Map map){
+  factory Produto.byMap(Map map){
+
+    double ? valor_unit, porc_lucro;
+    if (map['valor_unit'] is String) {
+      valor_unit = map['valor_unit']!=null?
+                        double.parse(map['valor_unit']):map['valor_unit'];
+    } else {
+      valor_unit = map['valor_unit'];
+    }
+    if (map['porc_lucro'] is String) {
+      porc_lucro = map['porc_lucro']!=null?
+                  double.parse(map['porc_lucro']):map['porc_lucro'];
+    } else {
+      porc_lucro = map['porc_lucro'];
+    }
+
+
     return UtilsGeral.isKeysExists(SQLGeral.id, map) ?
     Produto(
         id: map['id'],
         nome: map['nome'],
-        uni_med: map['uni_med'],
-        valor_unit: map['valor_unit'],
-        porc_lucro: map['porc_lucro']
+        unid_medida: map['unid_medida'],
+        valor_unit: valor_unit,
+        porc_lucro: porc_lucro
     ) :
     Produto(
         nome: map['nome'],
-        uni_med: map['uni_med'],
-        valor_unit: map['valor_unit'],
-        porc_lucro: map['perc_lucro']
+        unid_medida: map['unid_medida'],
+        valor_unit: valor_unit,
+        porc_lucro: porc_lucro
     );
   }
 
   Map<String, dynamic> toMap ()=> {
+    "id":id,
     "nome":nome,
-    "uni_med":uni_med,
+    "unid_medida":unid_medida,
     "valor_unit":valor_unit,
     "porc_lucro":porc_lucro
   };
