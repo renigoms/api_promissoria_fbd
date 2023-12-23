@@ -96,4 +96,17 @@ class DAOProduto implements DAOUtilsI {
       return false;
     }
   }
+
+  Future<bool> deleteProduto(String id) async{
+    try{
+      if(id.isEmpty) throw IDException();
+      final query = sprintf(SQLProduto.DELETE, [id]);
+      return await Cursor.execute(query);
+    }on IDException{
+      rethrow;
+    }catch(e){
+      print("Erro ao deletar, $e");
+      return false;
+    }
+  }
 }
