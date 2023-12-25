@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:mirrors';
 
@@ -14,31 +15,21 @@ class DAOClientes implements DAOUtilsI {
   @override
   String createTable() => SQLCliente.CREATE_TABLE;
 
-  /// Método estático que tem como objetivo transformar o retorno de querys
-  /// do tipo SELECT em uma lista de maps
-  Future<List<Map<String, dynamic>>> _getSelectMap(String query) async {
-    final dados = await Cursor.query(query);
-    final listMapDados =
-        dados!.map((element) => element.toColumnMap()).toList();
-    return [
-      for (Map<String, dynamic> map in listMapDados) Cliente.byMap(map).toMap()
-    ];
-  }
 
-  Future<List<Map<String, dynamic>>> getAll() {
-    String query = SQLCliente.SELECT_ALL;
-    return _getSelectMap(query);
-  }
 
-  Future<List<Map<String, dynamic>>> getByID(String id) {
-    String query = sprintf(SQLCliente.SELECT_BY_ID, [id]);
-    return _getSelectMap(query);
-  }
+  @override
+  Future<List<Map<String, dynamic>>> getAll() =>
+      UtilsGeral.getSelectMapCliente(SQLCliente.SELECT_ALL);
 
-  Future<List<Map<String, dynamic>>> getByName(String cpf) {
-    final query = sprintf(SQLCliente.SELECT_BY_CPF, ["'$cpf'"]);
-    return _getSelectMap(query);
-  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getByID(String id) =>
+      UtilsGeral.getSelectMapCliente(sprintf(SQLCliente.SELECT_BY_ID, [id]));
+
+
+  Future<List<Map<String, dynamic>>> getByName(String cpf) =>
+      UtilsGeral.getSelectMapCliente(sprintf(SQLCliente.SELECT_BY_CPF, ["'$cpf'"]));
+
 
   Future<bool> postCreateCliente(Cliente cliente) async {
     try {

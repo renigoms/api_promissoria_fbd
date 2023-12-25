@@ -13,17 +13,17 @@ class ClienteHandlerController implements ServerUtils {
   Router get router {
     final router = Router();
 
-    router.get('/', (Request request) async {
-      return ResponseUtils.getResponse(await DAOClientes().getAll());
-    });
+    router.get('/', (Request request) async =>
+        ResponseUtils.getResponse(await DAOClientes().getAll())
+    );
 
-    router.get("/<id>", (Request request, String id) async {
-      return ResponseUtils.getResponse(await DAOClientes().getByID(id));
-    });
+    router.get("/<id>", (Request request, String id) async =>
+        ResponseUtils.getResponse(await DAOClientes().getByID(id))
+    );
 
-    router.get("/cpf/<cpf>", (Request request, String cpf) async {
-      return ResponseUtils.getResponse(await DAOClientes().getByName(cpf));
-    });
+    router.get("/cpf/<cpf>", (Request request, String cpf) async =>
+        ResponseUtils.getResponse(await DAOClientes().getByName(cpf))
+    );
 
     router.post('/', (Request request) async {
       try {

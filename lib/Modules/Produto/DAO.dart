@@ -11,33 +11,21 @@ class DAOProduto implements DAOUtilsI {
   @override
   String createTable() => SQLProduto.CREATE_TABLE;
 
-  /// Método estático que tem como objetivo transformar o retorno de querys
-  /// do tipo SELECT em uma lista de maps
-  Future<List<Map<String, dynamic>>> _getSelectMap(String query) async {
-    final dados = await Cursor.query(query);
-    final listMapDados =
-        dados!.map((element) => element.toColumnMap()).toList();
-    return [
-      for (Map<String, dynamic> map in listMapDados) Produto.byMap(map).toMap()
-    ];
-  }
+
 
   @override
-  Future<List<Map<String, dynamic>>> getAll() {
-    String query = SQLProduto.SELECT_ALL;
-    return _getSelectMap(query);
-  }
+  Future<List<Map<String, dynamic>>> getAll() =>
+      UtilsGeral.getSelectMapProduto(SQLProduto.SELECT_ALL);
+
 
   @override
-  Future<List<Map<String, dynamic>>> getByID(String id) {
-    String query = sprintf(SQLProduto.SELECT_BY_ID, [id]);
-    return _getSelectMap(query);
-  }
+  Future<List<Map<String, dynamic>>> getByID(String id) =>
+      UtilsGeral.getSelectMapProduto(sprintf(SQLProduto.SELECT_BY_ID, [id]));
+
 
   Future<List<Map<String, dynamic>>> getByName(String name) {
     final name_replace = name.replaceAll("%20", " ");
-    String query = sprintf(SQLProduto.SELECT_BY_NAME, [name_replace]);
-    return _getSelectMap(query);
+    return UtilsGeral.getSelectMapProduto(sprintf(SQLProduto.SELECT_BY_NAME, [name_replace]));
   }
 
   Future<bool> postCreateProduto(Produto produto) async {
