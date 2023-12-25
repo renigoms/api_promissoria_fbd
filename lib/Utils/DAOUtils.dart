@@ -2,6 +2,8 @@
 
 import 'package:sistema_promissorias/Modules/Cliente/model.dart';
 
+import '../Modules/Contrato/model.dart';
+import '../Modules/Produto/model.dart';
 import '../Service/open_cursor.dart';
 
 abstract interface class DAOUtilsI{
@@ -17,6 +19,39 @@ abstract class UtilsGeral{
       if (isKey == key) return true;
     }
     return false;
+  }
+
+  /// Método estático que tem como objetivo transformar o retorno de querys
+  /// do tipo SELECT em uma lista de maps
+  static Future<List<Map<String, dynamic>>> getSelectMapCliente(String query) async {
+    final dados = await Cursor.query(query);
+    final listMapDados =
+    dados!.map((element) => element.toColumnMap()).toList();
+    return [
+      for (Map<String, dynamic> map in listMapDados) Cliente.byMap(map).toMap()
+    ];
+  }
+
+  /// Método estático que tem como objetivo transformar o retorno de querys
+  /// do tipo SELECT em uma lista de maps
+  static Future<List<Map<String, dynamic>>> getSelectMapProduto(String query) async {
+    final dados = await Cursor.query(query);
+    final listMapDados =
+    dados!.map((element) => element.toColumnMap()).toList();
+    return [
+      for (Map<String, dynamic> map in listMapDados) Produto.byMap(map).toMap()
+    ];
+  }
+
+  /// Método estático que tem como objetivo transformar o retorno de querys
+  /// do tipo SELECT em uma lista de maps
+  static Future<List<Map<String, dynamic>>> getSelectMapContrato(String query) async {
+    final dados = await Cursor.query(query);
+    final listMapDados =
+    dados!.map((element) => element.toColumnMap()).toList();
+    return [
+      for (Map<String, dynamic> map in listMapDados) Contrato.byMap(map).toMap()
+    ];
   }
 
   static dynamic getValUpdate(var oldValue, var newValue) => newValue ?? oldValue;

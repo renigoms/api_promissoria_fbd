@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:postgres/legacy.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/src/router.dart';
@@ -15,21 +13,20 @@ class ProdutoControllerHandler implements ServerUtils {
   Router get router {
     final route = Router();
 
-    route.get("/", (Request request) async {
-      return ResponseUtils.getResponse(await DAOProduto().getAll());
-    });
+    route.get("/", (Request request) async =>
+        ResponseUtils.getResponse(await DAOProduto().getAll())
+    );
 
-    route.get("/<id>", (Request request, String id) async {
-      return ResponseUtils.getResponse(await DAOProduto().getByID(id));
-    });
+    route.get("/<id>", (Request request, String id) async =>
+        ResponseUtils.getResponse(await DAOProduto().getByID(id))
+    );
 
-    route.get("/nome/<nome>", (Request request, String nome) async {
-      return ResponseUtils.getResponse(await DAOProduto().getByName(nome));
-    });
+    route.get("/nome/<nome>", (Request request, String nome) async =>
+        ResponseUtils.getResponse(await DAOProduto().getByName(nome))
+    );
 
     route.post("/", (Request request) async {
       try {
-        print(await request.readAsString());
         return await DAOProduto().postCreateProduto(Produto.byMap(
                 ResponseUtils.dadosReqMap(await request.readAsString())))
             ? Response.ok("Produto cadastrado com sucesso!")
