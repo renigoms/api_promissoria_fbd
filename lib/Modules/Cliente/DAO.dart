@@ -85,9 +85,7 @@ class DAOClientes implements DAOUtilsI {
 
   Future<bool> deleteCliente(String id) async {
     try {
-      if (id.isEmpty) throw IDException();
-      final query = sprintf(SQLCliente.DELETE, [id]);
-      return await Cursor.execute(query);
+      return await UtilsGeral.executeDelete(SQLCliente.DELETE, id);
     } on IDException {
       rethrow;
     } catch (e) {
