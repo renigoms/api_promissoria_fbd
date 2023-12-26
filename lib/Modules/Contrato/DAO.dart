@@ -9,8 +9,6 @@ class DAOContrato implements DAOUtilsI {
   @override
   String createTable() => SQLContrato.CREATE_TABLE;
 
-
-
   @override
   Future<List<Map<String, dynamic>>> getAll() async =>
       UtilsGeral.getSelectMapContrato(SQLContrato.SELECT_ALL);

@@ -1,7 +1,7 @@
 import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 
 abstract class SQLCliente {
-  static const NAME_TABLE = "Cliente",
+  static String NAME_TABLE = "Cliente",
       _NOME_COMPLETO = "nome_completo",
       _CPF = "cpf",
       _EMAIL = "email",
@@ -11,7 +11,7 @@ abstract class SQLCliente {
           "$_CPF VARCHAR(14) UNIQUE NOT NULL,"
           "$_EMAIL VARCHAR(100) NOT NULL,"
           "$_TELEFONE VARCHAR(100) NOT NULL);",
-      SELECT_ALL = "SELECT * FROM $NAME_TABLE",
+      SELECT_ALL = SQLGeral.selectAll(NAME_TABLE),
       SELECT_BY_ID = "$SELECT_ALL WHERE ${SQLGeral.id} = %s;",
       SELECT_BY_CPF = "$SELECT_ALL WHERE $_CPF ILIKE %s;",
 
@@ -22,5 +22,5 @@ abstract class SQLCliente {
           "SET $_NOME_COMPLETO='%s', $_CPF = '%s',  $_EMAIL = '%s', $_TELEFONE = '%s' "
           "WHERE ${SQLGeral.id} = %s",
 
-      DELETE = "DELETE FROM $NAME_TABLE WHERE ${SQLGeral.id} = %s;";
+      DELETE = SQLGeral.deleteSQL(NAME_TABLE);
 }

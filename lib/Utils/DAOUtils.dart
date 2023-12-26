@@ -1,9 +1,11 @@
 
 
 import 'package:sistema_promissorias/Modules/Cliente/model.dart';
+import 'package:sprintf/sprintf.dart';
 
 import '../Modules/Contrato/model.dart';
 import '../Modules/Produto/model.dart';
+import '../Service/exceptions.dart';
 import '../Service/open_cursor.dart';
 
 abstract interface class DAOUtilsI{
@@ -55,4 +57,16 @@ abstract class UtilsGeral{
   }
 
   static dynamic getValUpdate(var oldValue, var newValue) => newValue ?? oldValue;
+
+  static Future<bool> executeDelete(String sqlDelete, String index) async{
+    try {
+      if (index.isEmpty) throw IDException();
+      final query = sprintf(sqlDelete, [index]);
+      return await Cursor.execute(query);
+    } on IDException {
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

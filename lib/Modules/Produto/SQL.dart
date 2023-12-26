@@ -1,7 +1,7 @@
 import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 
 class SQLProduto {
-  static const NAME_TABLE = "Produto",
+  static String NAME_TABLE = "Produto",
       _NAME = "nome",
       _UNID_MEDIDA = "unid_medida",
       _VALOR_UNIT = "valor_unit",
@@ -10,7 +10,7 @@ class SQLProduto {
           "${SQLGeral.id_query}, $_NAME VARCHAR(200) UNIQUE NOT NULL,"
           "$_UNID_MEDIDA VARCHAR(100) NOT NULL,"
           "$_VALOR_UNIT NUMERIC NOT NULL, $_PORCENT_LUCRO NUMERIC DEFAULT 0.30);",
-      SELECT_ALL = "SELECT * FROM $NAME_TABLE",
+      SELECT_ALL = SQLGeral.selectAll(NAME_TABLE),
       SELECT_BY_ID = "$SELECT_ALL WHERE ${SQLGeral.id} = %s",
       SELECT_BY_NAME = "$SELECT_ALL WHERE $_NAME ILIKE '%s';",
 
@@ -25,5 +25,5 @@ class SQLProduto {
       UPDATE = "UPDATE $NAME_TABLE SET $_NAME = '%s', $_UNID_MEDIDA = '%s',"
           "$_VALOR_UNIT = %s, $_PORCENT_LUCRO = %s WHERE ${SQLGeral.id} = %s;",
 
-      DELETE = "DELETE FROM $NAME_TABLE WHERE ${SQLGeral.id} = %s;";
+      DELETE = SQLGeral.deleteSQL(NAME_TABLE);
 }
