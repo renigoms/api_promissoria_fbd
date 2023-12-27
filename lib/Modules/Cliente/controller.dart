@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:postgres/legacy.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
@@ -13,21 +11,24 @@ class ClienteHandlerController implements ServerUtils {
   Router get router {
     final router = Router();
 
-    router.get('/', (Request request) async =>
-        ResponseUtils.getResponse(await DAOClientes().getAll())
-    );
+    router.get(
+        '/',
+        (Request request) async =>
+            ResponseUtils.getResponse(await DAOClientes().getAll()));
 
-    router.get("/<id>", (Request request, String id) async =>
-        ResponseUtils.getResponse(await DAOClientes().getByID(id))
-    );
+    router.get(
+        "/<id>",
+        (Request request, String id) async =>
+            ResponseUtils.getResponse(await DAOClientes().getByID(id)));
 
-    router.get("/cpf/<cpf>", (Request request, String cpf) async =>
-        ResponseUtils.getResponse(await DAOClientes().getByName(cpf))
-    );
+    router.get(
+        "/cpf/<cpf>",
+        (Request request, String cpf) async =>
+            ResponseUtils.getResponse(await DAOClientes().getByName(cpf)));
 
     router.post('/', (Request request) async {
       try {
-        return await DAOClientes().postCreateCliente(Cliente.byMap(
+        return await DAOClientes().postCreate(Cliente.byMap(
                 ResponseUtils.dadosReqMap(await request.readAsString())))
             ? Response.ok("Cliente cadastrado com sucesso!")
             : Response.internalServerError(
@@ -40,7 +41,7 @@ class ClienteHandlerController implements ServerUtils {
 
     router.put("/", (Request request) async {
       try {
-        return await DAOClientes().putUpdateCliente(Cliente.byMap(
+        return await DAOClientes().putUpdate(Cliente.byMap(
                 ResponseUtils.dadosReqMap(await request.readAsString())))
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
@@ -53,7 +54,7 @@ class ClienteHandlerController implements ServerUtils {
 
     router.delete("/<id>", (Request request, String id) async {
       try {
-        return await DAOClientes().deleteCliente(id)
+        return await DAOClientes().delete(id)
             ? Response.ok("Cliente deletado com sucesso!")
             : Response.internalServerError(body: "Tentativa de delete falhou!");
       } on IDException {

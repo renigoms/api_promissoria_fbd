@@ -13,21 +13,24 @@ class ProdutoControllerHandler implements ServerUtils {
   Router get router {
     final route = Router();
 
-    route.get("/", (Request request) async =>
-        ResponseUtils.getResponse(await DAOProduto().getAll())
-    );
+    route.get(
+        "/",
+        (Request request) async =>
+            ResponseUtils.getResponse(await DAOProduto().getAll()));
 
-    route.get("/<id>", (Request request, String id) async =>
-        ResponseUtils.getResponse(await DAOProduto().getByID(id))
-    );
+    route.get(
+        "/<id>",
+        (Request request, String id) async =>
+            ResponseUtils.getResponse(await DAOProduto().getByID(id)));
 
-    route.get("/nome/<nome>", (Request request, String nome) async =>
-        ResponseUtils.getResponse(await DAOProduto().getByName(nome))
-    );
+    route.get(
+        "/nome/<nome>",
+        (Request request, String nome) async =>
+            ResponseUtils.getResponse(await DAOProduto().getByName(nome)));
 
     route.post("/", (Request request) async {
       try {
-        return await DAOProduto().postCreateProduto(Produto.byMap(
+        return await DAOProduto().postCreate(Produto.byMap(
                 ResponseUtils.dadosReqMap(await request.readAsString())))
             ? Response.ok("Produto cadastrado com sucesso!")
             : Response.internalServerError(
@@ -40,7 +43,7 @@ class ProdutoControllerHandler implements ServerUtils {
 
     route.put("/", (Request request) async {
       try {
-        return await DAOProduto().putUpdateProduto(Produto.byMap(
+        return await DAOProduto().putUpdate(Produto.byMap(
                 ResponseUtils.dadosReqMap(await request.readAsString())))
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
@@ -51,15 +54,14 @@ class ProdutoControllerHandler implements ServerUtils {
       }
     });
 
-    route.delete("/<id>", (Request request, String id) async{
-      try{
-        return await DAOProduto().deleteProduto(id) ?
-            Response.ok("Produto deletado com sucesso!"):
-            Response.internalServerError(body: "Tentativa de delete falhou!");
-      }on IDException{
+    route.delete("/<id>", (Request request, String id) async {
+      try {
+        return await DAOProduto().deleteProduto(id)
+            ? Response.ok("Produto deletado com sucesso!")
+            : Response.internalServerError(body: "Tentativa de delete falhou!");
+      } on IDException {
         return Response.badRequest(
-        body: "Você precisa fornecer o ID do produto que quer deletar!"
-        );
+            body: "Você precisa fornecer o ID do produto que quer deletar!");
       }
     });
 
