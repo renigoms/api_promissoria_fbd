@@ -11,24 +11,21 @@ class DAOProduto implements DAOUtilsI {
   @override
   String createTable() => SQLProduto.CREATE_TABLE;
 
-
-
   @override
   Future<List<Map<String, dynamic>>> getAll() =>
       UtilsGeral.getSelectMapProduto(SQLProduto.SELECT_ALL);
-
 
   @override
   Future<List<Map<String, dynamic>>> getByID(String id) =>
       UtilsGeral.getSelectMapProduto(sprintf(SQLProduto.SELECT_BY_ID, [id]));
 
-
   Future<List<Map<String, dynamic>>> getByName(String name) {
     final name_replace = name.replaceAll("%20", " ");
-    return UtilsGeral.getSelectMapProduto(sprintf(SQLProduto.SELECT_BY_NAME, [name_replace]));
+    return UtilsGeral.getSelectMapProduto(
+        sprintf(SQLProduto.SELECT_BY_NAME, [name_replace]));
   }
 
-  Future<bool> postCreateProduto(Produto produto) async {
+  Future<bool> postCreate(Produto produto) async {
     try {
       String query = produto.porc_lucro == null
           ? sprintf(SQLProduto.CREATE_WITH_PORC_LUCRO_DEFAULT, [
@@ -55,28 +52,25 @@ class DAOProduto implements DAOUtilsI {
     }
   }
 
-  Future<bool> putUpdateProduto(Produto produto) async{
-    try{
-
+  Future<bool> putUpdate(Produto produto) async {
+    try {
       List oldProduto = await getByID(produto.id.toString());
 
       String id = produto.id.toString(),
-      nome = UtilsGeral.getValUpdate(oldProduto[0]['nome'],
-          produto.nome),
-      unid_medida = UtilsGeral.getValUpdate(oldProduto[0]['unid_medida'],
-          produto.unid_medida),
-      valor_unit = UtilsGeral.getValUpdate(oldProduto[0]['valor_unit'],
-          produto.valor_unit).toString(),
-      porc_lucro = UtilsGeral.getValUpdate(oldProduto[0]['porc_lucro'],
-          produto.porc_lucro).toString();
+          nome = UtilsGeral.getValUpdate(oldProduto[0]['nome'], produto.nome),
+          unid_medida = UtilsGeral.getValUpdate(
+              oldProduto[0]['unid_medida'], produto.unid_medida),
+          valor_unit = UtilsGeral.getValUpdate(
+                  oldProduto[0]['valor_unit'], produto.valor_unit)
+              .toString(),
+          porc_lucro = UtilsGeral.getValUpdate(
+                  oldProduto[0]['porc_lucro'], produto.porc_lucro)
+              .toString();
 
-      String query = sprintf(SQLProduto.UPDATE,
-      [
-        nome, unid_medida, valor_unit, porc_lucro, id
-      ]);
-
-      return await Cursor.execute(query);
-    }on IDException {
+      return await Cursor.execute( sprintf(
+          SQLProduto.UPDATE, [nome, unid_medida, valor_unit, porc_lucro, id]));
+          
+    } on IDException {
       rethrow;
     } catch (e, s) {
       print("Erro durante o update, $e");
@@ -85,12 +79,12 @@ class DAOProduto implements DAOUtilsI {
     }
   }
 
-  Future<bool> deleteProduto(String id) async{
-    try{
+  Future<bool> deleteProduto(String id) async {
+    try {
       return await UtilsGeral.executeDelete(SQLProduto.DELETE, id);
-    }on IDException{
+    } on IDException {
       rethrow;
-    }catch(e){
+    } catch (e) {
       print("Erro ao deletar, $e");
       return false;
     }

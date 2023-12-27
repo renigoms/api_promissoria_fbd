@@ -1,6 +1,7 @@
 
 
 import 'package:sistema_promissorias/Modules/Cliente/model.dart';
+import 'package:sistema_promissorias/Modules/Parcela/model.dart';
 import 'package:sprintf/sprintf.dart';
 
 import '../Modules/Contrato/model.dart';
@@ -27,8 +28,7 @@ abstract class UtilsGeral{
   /// do tipo SELECT em uma lista de maps
   static Future<List<Map<String, dynamic>>> getSelectMapCliente(String query) async {
     final dados = await Cursor.query(query);
-    final listMapDados =
-    dados!.map((element) => element.toColumnMap()).toList();
+    final listMapDados = dados!.map((element) => element.toColumnMap()).toList();
     return [
       for (Map<String, dynamic> map in listMapDados) Cliente.byMap(map).toMap()
     ];
@@ -38,8 +38,7 @@ abstract class UtilsGeral{
   /// do tipo SELECT em uma lista de maps
   static Future<List<Map<String, dynamic>>> getSelectMapProduto(String query) async {
     final dados = await Cursor.query(query);
-    final listMapDados =
-    dados!.map((element) => element.toColumnMap()).toList();
+    final listMapDados = dados!.map((element) => element.toColumnMap()).toList();
     return [
       for (Map<String, dynamic> map in listMapDados) Produto.byMap(map).toMap()
     ];
@@ -49,10 +48,19 @@ abstract class UtilsGeral{
   /// do tipo SELECT em uma lista de maps
   static Future<List<Map<String, dynamic>>> getSelectMapContrato(String query) async {
     final dados = await Cursor.query(query);
-    final listMapDados =
-    dados!.map((element) => element.toColumnMap()).toList();
+    final listMapDados = dados!.map((element) => element.toColumnMap()).toList();
     return [
       for (Map<String, dynamic> map in listMapDados) Contrato.byMap(map).toMap()
+    ];
+  }
+
+  /// Método estático que tem como objetivo transformar o retorno de querys
+  /// do tipo SELECT em uma lista de maps
+  static Future<List<Map<String, dynamic>>> getSelectMapPacela(String query) async {
+    final dados = await Cursor.query(query);
+    final listMapDados = dados!.map((element) => element.toColumnMap()).toList();
+    return [
+      for (Map<String, dynamic> map in listMapDados) Parcela.byMap(map).toMap()
     ];
   }
 

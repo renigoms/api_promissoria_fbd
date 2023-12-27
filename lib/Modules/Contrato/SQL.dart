@@ -1,4 +1,5 @@
 import 'package:sistema_promissorias/Modules/Cliente/SQL.dart';
+import 'package:sistema_promissorias/Modules/Parcela/SQL.dart';
 import 'package:sistema_promissorias/Modules/Produto/SQL.dart';
 import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 
@@ -8,6 +9,8 @@ class SQLContrato {
       _ID_PRODUTO = "id_produto",
       _VALOR_UNIT_BY_PRODUTO = "produto.valor_unit",
       _PORC_LUCRO_BY_PRODUTO = "produto.porc_lucro",
+      _STATUS_BY_PACELA = "parcela.status",
+      _ID_CONTRATO_BY_PARCELA = "parcela.id_contrato",
       _NUM_PARCLS = "num_parcelas",
       _VALOR = "valor",
       _QNT_PRODUTO = "qnt_produto",
@@ -30,8 +33,12 @@ class SQLContrato {
       SELECT_BY_ID_CLIENTE = "$SELECT_ALL WHERE $_ID_CLIENTE = %s;",
 
       SELECT_VAL_PORC_LUCRO_PRODUTO = "SELECT $_VALOR_UNIT_BY_PRODUTO,"
-          "$_PORC_LUCRO_BY_PRODUTO FROM ${SQLProduto.NAME_TABLE}"
+          "$_PORC_LUCRO_BY_PRODUTO FROM ${SQLProduto.NAME_TABLE} "
           "WHERE ${SQLGeral.id} = %s;",
+
+      SELECT_STATUS_PACELAS = "SELECT $_STATUS_BY_PACELA FROM $NAME_TABLE"
+          "INNER JOIN ${SQLParcela.NAME_TABLE} "
+          "ON $_ID_CONTRATO_BY_PARCELA = %s;",
           
       CREATE = "INSERT INTO $NAME_TABLE ($_ID_CLIENTE, $_ID_PRODUTO, $_NUM_PARCLS, "
       "$_QNT_PRODUTO, $_VALOR, $_DESCRICAO) VALUES (%s,%s,%s,%s,%s,'%s')",

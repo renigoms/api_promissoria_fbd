@@ -3,6 +3,7 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:sistema_promissorias/Modules/Cliente/controller.dart';
 import 'package:sistema_promissorias/Modules/Contrato/controller.dart';
+import 'package:sistema_promissorias/Modules/Parcela/controller.dart';
 import 'package:sistema_promissorias/Modules/Produto/controller.dart';
 
 class GeneralController {
@@ -14,6 +15,8 @@ class GeneralController {
       route.mount('/produto', ProdutoControllerHandler().router);
 
       route.mount('/contrato', ContratoHandlerController().router);
+
+      route.mount('/parcela', ParcelaHandlerController().router);
 
       return route;
 
