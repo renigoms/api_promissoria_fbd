@@ -36,7 +36,7 @@ class SQLContrato {
           "$_PORC_LUCRO_BY_PRODUTO FROM ${SQLProduto.NAME_TABLE} "
           "WHERE ${SQLGeral.id} = %s;",
 
-      SELECT_STATUS_PACELAS = "SELECT $_STATUS_BY_PACELA FROM $NAME_TABLE"
+      SELECT_STATUS_PACELAS = "SELECT $_STATUS_BY_PACELA FROM $NAME_TABLE "
           "INNER JOIN ${SQLParcela.NAME_TABLE} "
           "ON $_ID_CONTRATO_BY_PARCELA = %s;",
           
