@@ -4,9 +4,8 @@ import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 
 class Parcela{
   int?id;
-  double valor;
-  String data_pag;
-  String status;
+  double ? valor;
+  String ? data_pag, status;
 
   Parcela({
     this.id,
@@ -20,12 +19,12 @@ class Parcela{
     Parcela(
       id: map['id'],
       valor: map['valor'] != null ? double.parse(map['valor']):map['valor'],
-      data_pag: DateFormat("dd-MM-yyyy").format(map['data_pag']),
+      data_pag: map['data_pag'] != null ? DateFormat("dd-MM-yyyy").format(map['data_pag']):map['data_pag'],
       status: map['status']
     ):
     Parcela(
         valor: map['valor'],
-        data_pag: DateFormat("dd-MM-yyyy").format(map['data_pag']),
+        data_pag: map['data_pag'] != null ? DateFormat("dd-MM-yyyy").format(map['data_pag']):map['data_pag'],
         status: map['status']
     );
   }
