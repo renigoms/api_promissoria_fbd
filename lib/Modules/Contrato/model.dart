@@ -11,6 +11,8 @@ class Contrato {
 
   String ? descricao, data_pag_inicial;
 
+  bool ? parcelas_definidas;
+
   Contrato({
     this.id,
     required this.id_cliente,
@@ -19,7 +21,8 @@ class Contrato {
     required this.qnt_produto,
     required this.valor,
     required this.descricao,
-    this.data_pag_inicial
+    this.data_pag_inicial,
+    this.parcelas_definidas
   });
 
   factory Contrato.byMap(Map map){
@@ -36,7 +39,8 @@ class Contrato {
           qnt_produto: qnt_produto,
           valor:  map['valor'] != null ?double.parse(map['valor']):map['valor'],
           descricao: map['descricao'],
-          data_pag_inicial: DateFormat("dd-MM-yyyy").format(map['data_pag_inicial'])
+          data_pag_inicial:map['data_pag_inicial'] != null? DateFormat("dd-MM-yyyy").format(map['data_pag_inicial']):map['data_pag_inicial'],
+          parcelas_definidas: map['parcelas_definidas']
       );
     }
 
@@ -58,6 +62,7 @@ class Contrato {
     "qnt_produto":qnt_produto,
     "valor":valor,
     "descricao":descricao,
-    "data_pag_inicial":data_pag_inicial
+    "data_pag_inicial":data_pag_inicial,
+    "parcelas_definidas":parcelas_definidas
   };
 }

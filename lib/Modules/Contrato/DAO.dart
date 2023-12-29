@@ -23,6 +23,10 @@ class DAOContrato implements DAOUtilsI {
 
   Future<bool> postCreate(Contrato contrato) async {
     try {
+      if(contrato.id_cliente == null || contrato.id_produto == null ||
+      contrato.num_parcelas == null || contrato.descricao == null){
+          throw NullException();
+      }
       final valor_unit_and_porc_lucro = sprintf(
           SQLContrato.SELECT_VAL_PORC_LUCRO_PRODUTO, [contrato.id_produto]);
 
@@ -43,6 +47,8 @@ class DAOContrato implements DAOUtilsI {
         valor.toString(),
         contrato.descricao
       ]));
+    }on NullException{
+      rethrow;
     } catch (e) {
       print("Erro $e ao salvar, tente novamente!");
       return false;

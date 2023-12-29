@@ -25,6 +25,10 @@ class DAOClientes implements DAOUtilsI {
 
   Future<bool> postCreate(Cliente cliente) async {
     try {
+      if (cliente.nome_completo == null || cliente.cpf == null
+          || cliente.email == null || cliente.telefone==null) {
+        throw NullException();
+      }
       return await Cursor.execute(sprintf(SQLCliente.CREATE, [
         cliente.nome_completo,
         cliente.cpf,
@@ -37,19 +41,23 @@ class DAOClientes implements DAOUtilsI {
         rethrow;
       }
       return false;
+    }on NullException{
+      rethrow;
     } catch (e) {
       print("Erro $e ao salvar, tente novamente!");
       return false;
     }
   }
 
-  Future<bool> putUpdate(Cliente cliente) async {
+  Future<bool> putUpdate(Cliente cliente, String id) async {
     try {
-      if (cliente.id == null) throw IDException();
-      List oldCliente = await getByID(cliente.id.toString());
+      // ignore: unnecessary_null_comparison
+      if (id == null || id.isEmpty) throw IDException();
 
-      String id = cliente.id.toString(),
-          nomeCompleto = UtilsGeral.getValUpdate(
+      if(cliente.id != null) return throw NoAlterException();
+      List oldCliente = await getByID(id);
+
+      String nomeCompleto = UtilsGeral.getValUpdate(
               oldCliente[0]['nome_completo'], cliente.nome_completo),
           cpf = UtilsGeral.getValUpdate(oldCliente[0]['cpf'], cliente.cpf),
           email =
@@ -61,6 +69,8 @@ class DAOClientes implements DAOUtilsI {
           sprintf(SQLCliente.UPDATE, [nomeCompleto, cpf, email, telefone, id]);
       return await Cursor.execute(query);
     } on IDException {
+      rethrow;
+    }on NoAlterException{
       rethrow;
     } catch (e, s) {
       print("Erro durante o update, $e");
