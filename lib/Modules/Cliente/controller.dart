@@ -36,19 +36,25 @@ class ClienteHandlerController implements ServerUtils {
       } on PostgreSQLException {
         return Response.badRequest(
             body: "Opa, Já existe um cliente com o mesmo CPF que o seu!");
+      }on NullException{
+        return Response.badRequest(
+            body: "Alguns atributos não foram preenchidos!"
+        );
       }
     });
 
-    router.put("/", (Request request) async {
+    router.put("/<id>", (Request request, String id) async {
       try {
         return await DAOClientes().putUpdate(Cliente.byMap(
-                ResponseUtils.dadosReqMap(await request.readAsString())))
+                ResponseUtils.dadosReqMap(await request.readAsString())),id)
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
       } on IDException {
         return Response.badRequest(
             body:
                 "O id deve ser passado junto com os dados que serão alterados");
+      }on NoAlterException{
+        return Response.badRequest(body: "O id do cliente não pode ser alterado!");
       }
     });
 

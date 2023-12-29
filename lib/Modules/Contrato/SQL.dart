@@ -16,6 +16,7 @@ class SQLContrato {
       _QNT_PRODUTO = "qnt_produto",
       _DESCRICAO = "descricao",
       _DATA_PAG_INICIAL = "data_pag_inicial",
+      _PARCELAS_DEFINIDAS = "parcelas_definidas",
       CREATE_TABLE =
           "CREATE TABLE IF NOT EXISTS $NAME_TABLE(${SQLGeral.id_query},"
           "$_ID_CLIENTE INT REFERENCES ${SQLCliente.NAME_TABLE} (${SQLGeral.id}) NOT NULL,"
@@ -24,7 +25,8 @@ class SQLContrato {
           "$_DATA_PAG_INICIAL DATE NOT NULL, "
           "$_QNT_PRODUTO INT NOT NULL, "
           "$_VALOR NUMERIC NOT NULL,"
-          "$_DESCRICAO VARCHAR(200) NOT NULL);",
+          "$_DESCRICAO VARCHAR(200) NOT NULL,"
+          "$_PARCELAS_DEFINIDAS BOOL DEFAULT FALSE);",
 
       SELECT_ALL = SQLGeral.selectAll(NAME_TABLE),
 

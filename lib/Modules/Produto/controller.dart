@@ -38,19 +38,25 @@ class ProdutoControllerHandler implements ServerUtils {
       } on PostgreSQLException {
         return Response.badRequest(
             body: "Opa, Já existe um produto com o mesmo nome!");
+      }on NullException{
+        return Response.badRequest(
+            body: "Alguns atributos necessários não foram preenchidos!"
+        );
       }
     });
 
-    route.put("/", (Request request) async {
+    route.put("/<id>", (Request request, String id) async {
       try {
         return await DAOProduto().putUpdate(Produto.byMap(
-                ResponseUtils.dadosReqMap(await request.readAsString())))
+                ResponseUtils.dadosReqMap(await request.readAsString())),id)
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
       } on IDException {
         return Response.badRequest(
             body:
                 "O id deve ser passado junto com os dados que serão alterados");
+      }on NoAlterException{
+        return Response.badRequest(body: "O id não pode ser alterado!");
       }
     });
 
