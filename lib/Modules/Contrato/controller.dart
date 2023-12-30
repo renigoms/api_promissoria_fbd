@@ -22,9 +22,9 @@ class ContratoHandlerController implements ServerUtils {
             ResponseUtils.getResponse(await DAOContrato().getByID(id)));
 
     route.get(
-        "/id_cliente/<id_cliente>",
-        (Request request, String id) async =>
-            ResponseUtils.getResponse(await DAOContrato().getByIDCliente(id)));
+        "/nome_cliente/<nome_cliente>",
+        (Request request, String nome_cliente) async =>
+            ResponseUtils.getResponse(await DAOContrato().getByClienteName(nome_cliente)));
 
     route.post("/", (Request request) async {
      try{
