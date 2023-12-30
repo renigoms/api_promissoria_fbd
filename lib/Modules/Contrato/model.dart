@@ -9,7 +9,7 @@ class Contrato {
 
   int qnt_produto;
 
-  String ? descricao, data_pag_inicial;
+  String ? descricao, data_criacao;
 
   bool ? parcelas_definidas;
 
@@ -21,7 +21,7 @@ class Contrato {
     required this.qnt_produto,
     required this.valor,
     required this.descricao,
-    this.data_pag_inicial,
+    this.data_criacao,
     this.parcelas_definidas
   });
 
@@ -30,7 +30,7 @@ class Contrato {
     final qnt_produto = map['qnt_produto'] ?? 1;
 
     if (UtilsGeral.isKeysExists(SQLGeral.id, map) ||
-        UtilsGeral.isKeysExists('data_pag_inicial', map)) {
+        UtilsGeral.isKeysExists('data_criacao', map)) {
       return Contrato(
           id: map['id'],
           id_cliente: map['id_cliente'],
@@ -39,7 +39,7 @@ class Contrato {
           qnt_produto: qnt_produto,
           valor:  map['valor'] != null ?double.parse(map['valor']):map['valor'],
           descricao: map['descricao'],
-          data_pag_inicial:map['data_pag_inicial'] != null? DateFormat("dd-MM-yyyy").format(map['data_pag_inicial']):map['data_pag_inicial'],
+          data_criacao:map['data_criacao'] != null? DateFormat("dd-MM-yyyy").format(map['data_criacao']):map['data_criacao'],
           parcelas_definidas: map['parcelas_definidas']
       );
     }
@@ -62,7 +62,7 @@ class Contrato {
     "qnt_produto":qnt_produto,
     "valor":valor,
     "descricao":descricao,
-    "data_pag_inicial":data_pag_inicial,
+    "data_criacao":data_criacao,
     "parcelas_definidas":parcelas_definidas
   };
 }

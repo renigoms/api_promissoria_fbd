@@ -18,6 +18,8 @@ class Cursor {
           await ConnectDataBase.connectionMap(_dataMap).getConnection();
       await cursor!.execute(sqlComand);
       return true;
+    }on PgException{
+      rethrow;
     } catch (e) {
       print("Erro ao executa a query solicitada, ${e.toString()}");
       return false;
@@ -37,11 +39,10 @@ class Cursor {
 
   static Future<bool> initTables() async {
     try {
-      await execute(DAOClientes().createTable());
-      await execute(DAOProduto().createTable());
-      await execute(DAOContrato().createTable());
+     return await execute(DAOClientes().createTable())&&
+      await execute(DAOProduto().createTable())&&
+      await execute(DAOContrato().createTable())&&
       await execute(DAOParcela().createTable());
-      return true;
     } catch (e) {
       print('Falha ao iniciar tabelas, ${e.toString()}');
       return false;

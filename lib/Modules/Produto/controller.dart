@@ -1,4 +1,5 @@
 import 'package:postgres/legacy.dart';
+import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/src/router.dart';
 import 'package:sistema_promissorias/Modules/Produto/DAO.dart';
@@ -35,7 +36,7 @@ class ProdutoControllerHandler implements ServerUtils {
             ? Response.ok("Produto cadastrado com sucesso!")
             : Response.internalServerError(
                 body: "Erro durante o cadastro detectado!");
-      } on PostgreSQLException {
+      } on PgException {
         return Response.badRequest(
             body: "Opa, Já existe um produto com o mesmo nome!");
       }on NullException{
