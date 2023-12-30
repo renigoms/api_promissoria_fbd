@@ -17,6 +17,7 @@ class SQLContrato {
       _DESCRICAO = "descricao",
       _DATA_CRIACAO = "data_criacao",
       _PARCELAS_DEFINIDAS = "parcelas_definidas",
+      _CLIENTE_NOME_COMPLETO = "nome_completo",
       CREATE_TABLE =
           "CREATE TABLE IF NOT EXISTS $NAME_TABLE(${SQLGeral.id_query},"
           "$_ID_CLIENTE INT REFERENCES ${SQLCliente.NAME_TABLE} (${SQLGeral.id}) NOT NULL,"
@@ -32,8 +33,6 @@ class SQLContrato {
 
       SELECT_BY_ID = "$SELECT_ALL WHERE ${SQLGeral.id} = %s;",
 
-      SELECT_BY_ID_CLIENTE = "$SELECT_ALL WHERE $_ID_CLIENTE = %s;",
-
       SELECT_VAL_PORC_LUCRO_PRODUTO = "SELECT $_VALOR_UNIT_BY_PRODUTO,"
           "$_PORC_LUCRO_BY_PRODUTO FROM ${SQLProduto.NAME_TABLE} "
           "WHERE ${SQLGeral.id} = %s;",
@@ -41,6 +40,11 @@ class SQLContrato {
       SELECT_STATUS_PACELAS = "SELECT $_STATUS_BY_PACELA FROM $NAME_TABLE "
           "INNER JOIN ${SQLParcela.NAME_TABLE} "
           "ON $_ID_CONTRATO_BY_PARCELA = %s;",
+      _SELECT_ID_CLIENTE_BY_NAME = "SELECT ${SQLGeral.id} FROM ${SQLCliente.NAME_TABLE} "
+          "WHERE $_CLIENTE_NOME_COMPLETO = '%s'",
+
+      SELECT_BY_NAME_CLIENTE = "${SQLGeral.selectAll(NAME_TABLE)} "
+          "WHERE $_ID_CLIENTE IN ($_SELECT_ID_CLIENTE_BY_NAME);",
           
       CREATE = "INSERT INTO $NAME_TABLE ($_ID_CLIENTE, $_ID_PRODUTO, $_NUM_PARCLS, "
       "$_QNT_PRODUTO, $_VALOR, $_DESCRICAO) VALUES (%s,%s,%s,%s,%s,'%s')",

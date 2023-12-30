@@ -10,16 +10,20 @@ class DAOContrato implements DAOUtilsI {
   String createTable() => SQLContrato.CREATE_TABLE;
 
   @override
-  Future<List<Map<String, dynamic>>> getAll() async =>
+  Future<List<Map<String, dynamic>>> getAll()  =>
       UtilsGeral.getSelectMapContrato(SQLContrato.SELECT_ALL);
 
   @override
   Future<List<Map<String, dynamic>>> getByID(String id) =>
       UtilsGeral.getSelectMapContrato(sprintf(SQLContrato.SELECT_BY_ID, [id]));
 
-  Future<List<Map<String, dynamic>>> getByIDCliente(String id) =>
-      UtilsGeral.getSelectMapContrato(
-          sprintf(SQLContrato.SELECT_BY_ID_CLIENTE, [id]));
+  Future<List<Map<String, dynamic>>> getByClienteName(String name){
+    final name_replace = name.replaceAll("%20", " ");
+    return UtilsGeral.getSelectMapContrato(sprintf(
+        SQLContrato.SELECT_BY_NAME_CLIENTE,[name_replace]
+    ));
+  }
+
 
   Future<bool> postCreate(Contrato contrato) async {
     try {
