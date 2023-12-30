@@ -26,7 +26,7 @@ class DAOParcela {
   bool _IsNoAlterContrato(Contrato contrato) => 
       contrato.id_produto != null ||contrato.id_cliente != null 
       || contrato.num_parcelas != null ||
-      contrato.data_pag_inicial != null || contrato.valor != null ||
+      contrato.data_criacao != null || contrato.valor != null ||
       contrato.qnt_produto > 1 || contrato.descricao != null||
       contrato.parcelas_definidas != null;
 

@@ -1,4 +1,5 @@
 import 'package:postgres/legacy.dart';
+import 'package:postgres/postgres.dart';
 import 'package:sistema_promissorias/Modules/Cliente/SQL.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
 import 'package:sistema_promissorias/Service/open_cursor.dart';
@@ -35,9 +36,9 @@ class DAOClientes implements DAOUtilsI {
         cliente.email,
         cliente.telefone
       ]));
-    } on PostgreSQLException catch (e) {
+    } on PgException catch (e) {
       if (e.message
-          .contains("duplicate key value violates unique constraint")) {
+          .contains("duplicar valor da chave viola a restrição de unicidade")) {
         rethrow;
       }
       return false;

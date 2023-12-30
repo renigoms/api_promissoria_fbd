@@ -9,7 +9,7 @@ class SQLParcela{
       _VALOR = "valor",
       _ID_CONTRATO = "id_contrato",
       _VALOR_CONTRATO = 'valor',
-      _DATA_PAG_INICIAL_CONTRATO = 'data_pag_inicial',
+      _DATA_CRIACAO_CONTRATO = 'data_criacao',
       _QNT_PARCELAS_CONTRATO   = 'num_parcelas',
       _PARCELAS_DEFINIDAS = "parcelas_definidas",
 
@@ -23,7 +23,7 @@ class SQLParcela{
       SELECT_BY_ID_CONTRATO = "SELECT * FROM $NAME_TABLE WHERE $_ID_CONTRATO = %s",
       
       SELECT_CONTRATO = "SELECT $_QNT_PARCELAS_CONTRATO, "
-          "$_DATA_PAG_INICIAL_CONTRATO, $_VALOR_CONTRATO,"
+          "$_DATA_CRIACAO_CONTRATO, $_VALOR_CONTRATO,"
           "$_PARCELAS_DEFINIDAS FROM ${SQLContrato.NAME_TABLE} "
           "WHERE ${SQLGeral.id} = %s;",
 

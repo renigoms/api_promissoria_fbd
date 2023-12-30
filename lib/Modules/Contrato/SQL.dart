@@ -15,14 +15,14 @@ class SQLContrato {
       _VALOR = "valor",
       _QNT_PRODUTO = "qnt_produto",
       _DESCRICAO = "descricao",
-      _DATA_PAG_INICIAL = "data_pag_inicial",
+      _DATA_CRIACAO = "data_criacao",
       _PARCELAS_DEFINIDAS = "parcelas_definidas",
       CREATE_TABLE =
           "CREATE TABLE IF NOT EXISTS $NAME_TABLE(${SQLGeral.id_query},"
           "$_ID_CLIENTE INT REFERENCES ${SQLCliente.NAME_TABLE} (${SQLGeral.id}) NOT NULL,"
           "$_ID_PRODUTO INT REFERENCES ${SQLProduto.NAME_TABLE} (${SQLGeral.id}) NOT NULL,"
           "$_NUM_PARCLS INT NOT NULL, "
-          "$_DATA_PAG_INICIAL DATE NOT NULL, "
+          "$_DATA_CRIACAO DATE NOT NULL, "
           "$_QNT_PRODUTO INT NOT NULL, "
           "$_VALOR NUMERIC NOT NULL,"
           "$_DESCRICAO VARCHAR(200) NOT NULL,"

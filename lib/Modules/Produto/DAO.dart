@@ -1,6 +1,7 @@
 
 
 import 'package:postgres/legacy.dart';
+import 'package:postgres/postgres.dart';
 import 'package:sistema_promissorias/Modules/Produto/SQL.dart';
 import 'package:sistema_promissorias/Modules/Produto/model.dart';
 import 'package:sistema_promissorias/Service/open_cursor.dart';
@@ -44,9 +45,9 @@ class DAOProduto implements DAOUtilsI {
               produto.porc_lucro.toString()
             ]);
       return await Cursor.execute(query);
-    } on PostgreSQLException catch (e) {
+    } on PgException catch (e) {
       if (e.message
-          .contains("duplicate key value violates unique constraint")) {
+          .contains("duplicar valor da chave viola a restrição de unicidade")) {
         rethrow;
       }
       return false;

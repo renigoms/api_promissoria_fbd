@@ -1,4 +1,5 @@
 import 'package:postgres/legacy.dart';
+import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:sistema_promissorias/Modules/Cliente/DAO.dart';
@@ -33,7 +34,7 @@ class ClienteHandlerController implements ServerUtils {
             ? Response.ok("Cliente cadastrado com sucesso!")
             : Response.internalServerError(
                 body: "Erro durante o cadastro detectado!");
-      } on PostgreSQLException {
+      } on PgException {
         return Response.badRequest(
             body: "Opa, Já existe um cliente com o mesmo CPF que o seu!");
       }on NullException{
