@@ -10,26 +10,25 @@ class DAOContrato implements DAOUtilsI {
   String createTable() => SQLContrato.CREATE_TABLE;
 
   @override
-  Future<List<Map<String, dynamic>>> getAll()  =>
+  Future<List<Map<String, dynamic>>> getAll() =>
       UtilsGeral.getSelectMapContrato(SQLContrato.SELECT_ALL);
 
   @override
   Future<List<Map<String, dynamic>>> getByID(String id) =>
       UtilsGeral.getSelectMapContrato(sprintf(SQLContrato.SELECT_BY_ID, [id]));
 
-  Future<List<Map<String, dynamic>>> getByClienteName(String name){
-    final name_replace = name.replaceAll("%20", " ");
-    return UtilsGeral.getSelectMapContrato(sprintf(
-        SQLContrato.SELECT_BY_NAME_CLIENTE,[name_replace]
-    ));
+  Future<List<Map<String, dynamic>>> getByClienteCPF(String cpf) {
+    return UtilsGeral.getSelectMapContrato(
+        sprintf(SQLContrato.SELECT_BY_CPF_CLIENTE, [cpf]));
   }
-
 
   Future<bool> postCreate(Contrato contrato) async {
     try {
-      if(contrato.id_cliente == null || contrato.id_produto == null ||
-      contrato.num_parcelas == null || contrato.descricao == null){
-          throw NullException();
+      if (contrato.id_cliente == null ||
+          contrato.id_produto == null ||
+          contrato.num_parcelas == null ||
+          contrato.descricao == null) {
+        throw NullException();
       }
       final valor_unit_and_porc_lucro = sprintf(
           SQLContrato.SELECT_VAL_PORC_LUCRO_PRODUTO, [contrato.id_produto]);
@@ -51,7 +50,7 @@ class DAOContrato implements DAOUtilsI {
         valor.toString(),
         contrato.descricao
       ]));
-    }on NullException{
+    } on NullException {
       rethrow;
     } catch (e) {
       print("Erro $e ao salvar, tente novamente!");
@@ -60,8 +59,8 @@ class DAOContrato implements DAOUtilsI {
   }
 
   Future<bool> _isFullParcelasPagas(String id) async {
-    final listStatusParcela =
-        await UtilsGeral.getSelectMapPacela(sprintf(SQLContrato.SELECT_STATUS_PACELAS,[id]));
+    final listStatusParcela = await UtilsGeral.getSelectMapPacela(
+        sprintf(SQLContrato.SELECT_STATUS_PACELAS, [id]));
 
     for (Map<String, dynamic> map in listStatusParcela) {
       if (map['status'] == "EM ABERTO") return false;

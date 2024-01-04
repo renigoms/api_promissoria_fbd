@@ -32,7 +32,7 @@ class ParcelaHandlerController implements ServerUtils{
             body: "Erro durante a criação das parcelas detectado!");
       }on IDException{
         return Response.badRequest(
-          body: "Você deve passar o id do contrato!"
+          body: "Você deve passar, e apenas, o id do contrato!"
         );
       }on ParcelasDefinidasException{
         return Response.badRequest(
@@ -53,7 +53,7 @@ class ParcelaHandlerController implements ServerUtils{
         );
       }on IDException{
         return Response.badRequest(body: "Você deve passar o id do contrato "
-            "e a data da parcela que deseja quitar");
+            "e a data da parcela que deseja alterar");
       }catch(e){
         return Response.internalServerError(body: "Erro ao tentar realizar as alterações solicitadas!");
       }

@@ -22,21 +22,23 @@ class ContratoHandlerController implements ServerUtils {
             ResponseUtils.getResponse(await DAOContrato().getByID(id)));
 
     route.get(
-        "/nome_cliente/<nome_cliente>",
-        (Request request, String nome_cliente) async =>
-            ResponseUtils.getResponse(await DAOContrato().getByClienteName(nome_cliente)));
+        "/cpf_cliente/<cpf>",
+        (Request request, String cpf_cliente) async =>
+            ResponseUtils.getResponse(
+                await DAOContrato().getByClienteCPF(cpf_cliente)));
 
     route.post("/", (Request request) async {
-     try{
-       return await DAOContrato().postCreate(Contrato.byMap(
-           ResponseUtils.dadosReqMap(await request.readAsString())))
-           ? Response.ok("Contrato cadastrado com sucesso!")
-           : Response.internalServerError(
-           body: "Erro durante o cadastro detectado!");
-     }on NullException{
-       return Response.badRequest(body: "Alguns atributos necessários "
-           "não foram preenchidos!");
-     }
+      try {
+        return await DAOContrato().postCreate(Contrato.byMap(
+                ResponseUtils.dadosReqMap(await request.readAsString())))
+            ? Response.ok("Contrato cadastrado com sucesso!")
+            : Response.internalServerError(
+                body: "Erro durante o cadastro detectado!");
+      } on NullException {
+        return Response.badRequest(
+            body: "Alguns atributos necessários "
+                "não foram preenchidos!");
+      }
     });
 
     route.delete("/<id>", (Request request, String id) async {
