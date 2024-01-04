@@ -1,6 +1,5 @@
 
 
-import 'package:postgres/legacy.dart';
 import 'package:postgres/postgres.dart';
 import 'package:sistema_promissorias/Modules/Produto/SQL.dart';
 import 'package:sistema_promissorias/Modules/Produto/model.dart';
