@@ -37,25 +37,27 @@ class ClienteHandlerController implements ServerUtils {
       } on PgException {
         return Response.badRequest(
             body: "Opa, Já existe um cliente com o mesmo CPF que o seu!");
-      }on NullException{
+      } on NullException {
         return Response.badRequest(
-            body: "Alguns atributos não foram preenchidos!"
-        );
+            body: "Alguns atributos não foram preenchidos!");
       }
     });
 
     router.put("/<id>", (Request request, String id) async {
       try {
-        return await DAOClientes().putUpdate(Cliente.byMap(
-                ResponseUtils.dadosReqMap(await request.readAsString())),id)
+        return await DAOClientes().putUpdate(
+                Cliente.byMap(
+                    ResponseUtils.dadosReqMap(await request.readAsString())),
+                id)
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
       } on IDException {
         return Response.badRequest(
             body:
                 "O id deve ser passado junto com os dados que serão alterados");
-      }on NoAlterException{
-        return Response.badRequest(body: "O id do cliente não pode ser alterado!");
+      } on NoAlterException {
+        return Response.badRequest(
+            body: "O id do cliente não pode ser alterado!");
       }
     });
 
@@ -67,6 +69,10 @@ class ClienteHandlerController implements ServerUtils {
       } on IDException {
         return Response.badRequest(
             body: "Você precisa fornecer o ID do cliente que quer deletar");
+      } on PgException {
+        return Response.badRequest(
+            body:
+                "Não foi possível excluir o cliente, pois ele possui um ou mais contratos ativos");
       }
     });
     return router;
