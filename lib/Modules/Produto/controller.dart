@@ -69,6 +69,11 @@ class ProdutoControllerHandler implements ServerUtils {
       } on IDException {
         return Response.badRequest(
             body: "Você precisa fornecer o ID do produto que quer deletar!");
+      }on PgException{
+        return Response.badRequest(
+          body: "Não foi possível excluir o seguinte produto, pois ele faz "
+              "parte de um ou mais contratos ativos!"
+        );
       }
     });
 

@@ -95,6 +95,8 @@ class DAOProduto implements DAOUtilsI {
       return await UtilsGeral.executeDelete(SQLProduto.DELETE, id);
     } on IDException {
       rethrow;
+    }on PgException{
+      rethrow;
     } catch (e) {
       print("Erro ao deletar, $e");
       return false;

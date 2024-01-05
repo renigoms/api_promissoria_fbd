@@ -26,8 +26,10 @@ class DAOClientes implements DAOUtilsI {
 
   Future<bool> postCreate(Cliente cliente) async {
     try {
-      if (cliente.nome_completo == null || cliente.cpf == null
-          || cliente.email == null || cliente.telefone==null) {
+      if (cliente.nome_completo == null ||
+          cliente.cpf == null ||
+          cliente.email == null ||
+          cliente.telefone == null) {
         throw NullException();
       }
       return await Cursor.execute(sprintf(SQLCliente.CREATE, [
@@ -42,7 +44,7 @@ class DAOClientes implements DAOUtilsI {
         rethrow;
       }
       return false;
-    }on NullException{
+    } on NullException {
       rethrow;
     } catch (e) {
       print("Erro $e ao salvar, tente novamente!");
@@ -55,7 +57,7 @@ class DAOClientes implements DAOUtilsI {
       // ignore: unnecessary_null_comparison
       if (id == null || id.isEmpty) throw IDException();
 
-      if(cliente.id != null) return throw NoAlterException();
+      if (cliente.id != null) return throw NoAlterException();
       List oldCliente = await getByID(id);
 
       String nomeCompleto = UtilsGeral.getValUpdate(
@@ -71,7 +73,7 @@ class DAOClientes implements DAOUtilsI {
       return await Cursor.execute(query);
     } on IDException {
       rethrow;
-    }on NoAlterException{
+    } on NoAlterException {
       rethrow;
     } catch (e, s) {
       print("Erro durante o update, $e");
@@ -84,6 +86,8 @@ class DAOClientes implements DAOUtilsI {
     try {
       return await UtilsGeral.executeDelete(SQLCliente.DELETE, id);
     } on IDException {
+      rethrow;
+    } on PgException {
       rethrow;
     } catch (e) {
       print("Erro ao deletar, $e");
