@@ -3,17 +3,21 @@ import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 
 class Parcela{
-  int?id, id_contrato;
-  double ? valor;
-  String ? data_pag, status;
+  int?_id, _id_contrato;
+  double ? _valor;
+  String ? _data_pag, _status;
 
   Parcela({
-    this.id,
-    required this.id_contrato,
-    required this.valor,
-    required this.data_pag,
-    required this.status
-  });
+    int ? id,
+    required int ? id_contrato,
+    required double ? valor,
+    required String ? data_pag,
+    required String ? status
+  }){
+   _id = id; _id_contrato = id_contrato;
+   _valor = valor; _data_pag = data_pag;
+   _status = status;
+  }
 
   factory Parcela.byMap(Map map){
     return UtilsGeral.isKeysExists(SQLGeral.id, map)?
@@ -33,10 +37,20 @@ class Parcela{
   }
 
   Map<String, dynamic> toMap() => {
-    "id": id,
-    "id_contrato":id_contrato,
-    "valor": valor,
-    "data_pag":data_pag,
-    "status": status
+    "id": _id,
+    "id_contrato":_id_contrato,
+    "valor": _valor,
+    "data_pag":_data_pag,
+    "status": _status
   };
+
+  get status => _status;
+
+  get data_pag => _data_pag;
+
+  get valor => _valor;
+
+  get id_contrato => _id_contrato;
+
+  get id => _id;
 }

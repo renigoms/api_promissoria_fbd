@@ -2,17 +2,22 @@ import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 
 class Produto {
-  int?id;
-  String ? nome, unid_medida;
-  double ? valor_unit, porc_lucro;
+  int?_id;
+  String ? _nome,_unid_medida;
+  double ? _valor_unit, _porc_lucro;
 
   Produto({
-    this.id,
-    required this.nome,
-    required this.unid_medida,
-    required this.valor_unit,
-    required this.porc_lucro
-  });
+    int ? id,
+    required String ? nome,
+    required String ? unid_medida,
+    required double ? valor_unit,
+    required double ? porc_lucro
+  }){
+   _id = id; _nome = nome;
+   _unid_medida = unid_medida;
+   _valor_unit = valor_unit;
+   _porc_lucro = porc_lucro;
+  }
 
   factory Produto.byMap(Map map){
 
@@ -48,10 +53,20 @@ class Produto {
   }
 
   Map<String, dynamic> toMap ()=> {
-    "id":id,
-    "nome":nome,
-    "unid_medida":unid_medida,
-    "valor_unit":valor_unit,
-    "porc_lucro":porc_lucro
+    "id":_id,
+    "nome":_nome,
+    "unid_medida":_unid_medida,
+    "valor_unit":_valor_unit,
+    "porc_lucro":_porc_lucro
   };
+
+  get porc_lucro => _porc_lucro;
+
+  get valor_unit => _valor_unit;
+
+  get unid_medida => _unid_medida;
+
+  get nome => _nome;
+
+  get id => _id;
 }
