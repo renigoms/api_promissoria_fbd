@@ -13,7 +13,7 @@ abstract class SQLCliente {
           "$_TELEFONE VARCHAR(100) NOT NULL);",
       SELECT_ALL = SQLGeral.selectAll(NAME_TABLE),
       SELECT_BY_ID = "$SELECT_ALL WHERE ${SQLGeral.id} = %s;",
-      SELECT_BY_CPF = "$SELECT_ALL WHERE $_CPF ILIKE %s;",
+      SELECT_BY_CPF = "$SELECT_ALL WHERE $_CPF ILIKE '%s';",
 
       CREATE = "INSERT INTO $NAME_TABLE ($_NOME_COMPLETO,"
           " $_CPF, $_EMAIL, $_TELEFONE) VALUES ('%s','%s','%s','%s');",
