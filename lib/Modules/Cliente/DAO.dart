@@ -20,9 +20,9 @@ class DAOClientes implements DAOUtilsI {
   Future<List<Map<String, dynamic>>> getByID(String id) =>
       UtilsGeral.getSelectMapCliente(sprintf(SQLCliente.SELECT_BY_ID, [id]));
 
-  Future<List<Map<String, dynamic>>> getByName(String cpf) =>
+  Future<List<Map<String, dynamic>>> getByCPF(String cpf) =>
       UtilsGeral.getSelectMapCliente(
-          sprintf(SQLCliente.SELECT_BY_CPF, ["'$cpf'"]));
+          sprintf(SQLCliente.SELECT_BY_CPF, [cpf]));
 
   Future<bool> postCreate(Cliente cliente) async {
     try {
