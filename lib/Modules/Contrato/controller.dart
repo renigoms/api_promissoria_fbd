@@ -31,13 +31,15 @@ class ContratoHandlerController implements ServerUtils {
       try {
         return await DAOContrato().postCreate(Contrato.byMap(
                 ResponseUtils.dadosReqMap(await request.readAsString())))
-            ? Response.ok("Contrato cadastrado com sucesso!")
+            ? Response.ok("Contrato gerado com sucesso!")
             : Response.internalServerError(
-                body: "Erro durante o cadastro detectado!");
+                body: "Erro ao gerar contrato!");
       } on NullException {
         return Response.badRequest(
             body: "Alguns atributos necessários "
                 "não foram preenchidos!");
+      }catch (e) {
+        return Response.badRequest(body: "Erro ao gerar contrato: $e");
       }
     });
 
@@ -53,6 +55,8 @@ class ContratoHandlerController implements ServerUtils {
       } on ParcelasEmAbertoExcerption {
         return Response.badRequest(
             body: "Ainda existem parcelas em aberto nesse contrato!");
+      } catch (e) {
+        return Response.badRequest(body: "Erro ao deletar: $e");
       }
     });
 

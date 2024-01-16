@@ -40,6 +40,9 @@ class ClienteHandlerController implements ServerUtils {
       } on NullException {
         return Response.badRequest(
             body: "Alguns atributos não foram preenchidos!");
+      } catch (e) {
+        return Response.badRequest(
+            body: "Erro durante o cadastro do cliente: $e");
       }
     });
 
@@ -58,6 +61,8 @@ class ClienteHandlerController implements ServerUtils {
       } on NoAlterException {
         return Response.badRequest(
             body: "O id do cliente não pode ser alterado!");
+      } catch (e) {
+        return Response.badRequest(body: "Falha no update: $e");
       }
     });
 
@@ -73,6 +78,8 @@ class ClienteHandlerController implements ServerUtils {
         return Response.badRequest(
             body:
                 "Não foi possível excluir o cliente, pois ele possui um ou mais contratos ativos");
+      } catch (e) {
+        return Response.badRequest(body: "Tentativa de delete Falhou: $e");
       }
     });
     return router;
