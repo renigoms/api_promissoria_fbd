@@ -39,25 +39,31 @@ class ProdutoControllerHandler implements ServerUtils {
       } on PgException {
         return Response.badRequest(
             body: "Opa, Já existe um produto com o mesmo nome!");
-      }on NullException{
+      } on NullException {
         return Response.badRequest(
-            body: "Alguns atributos necessários não foram preenchidos!"
-        );
+            body: "Alguns atributos necessários não foram preenchidos!");
+      } catch (e) {
+        return Response.badRequest(
+            body: "Erro durante o cadastro do produto: $e");
       }
     });
 
     route.put("/<id>", (Request request, String id) async {
       try {
-        return await DAOProduto().putUpdate(Produto.byMap(
-                ResponseUtils.dadosReqMap(await request.readAsString())),id)
+        return await DAOProduto().putUpdate(
+                Produto.byMap(
+                    ResponseUtils.dadosReqMap(await request.readAsString())),
+                id)
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
       } on IDException {
         return Response.badRequest(
             body:
                 "O id deve ser passado junto com os dados que serão alterados");
-      }on NoAlterException{
+      } on NoAlterException {
         return Response.badRequest(body: "O id não pode ser alterado!");
+      } catch (e) {
+        return Response.badRequest(body: "Falha no update: $e");
       }
     });
 
@@ -69,11 +75,12 @@ class ProdutoControllerHandler implements ServerUtils {
       } on IDException {
         return Response.badRequest(
             body: "Você precisa fornecer o ID do produto que quer deletar!");
-      }on PgException{
+      } on PgException {
         return Response.badRequest(
-          body: "Não foi possível excluir o seguinte produto, pois ele faz "
-              "parte de um ou mais contratos ativos!"
-        );
+            body: "Não foi possível excluir o seguinte produto, pois ele faz "
+                "parte de um ou mais contratos ativos!");
+      } catch (e) {
+        return Response.badRequest(body: "Tentativa de delete falhou: $e");
       }
     });
 
