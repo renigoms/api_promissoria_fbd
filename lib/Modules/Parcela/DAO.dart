@@ -85,7 +85,7 @@ class DAOParcela {
 
       final oldParcela = await getByDataPag(id_contrato, data_pag);
 
-      String status = UtilsGeral.getValUpdate(oldParcela, parcela.status);
+      String status = UtilsGeral.getValUpdate(oldParcela[0]['status'], parcela.status);
 
       return await Cursor.execute(sprintf(SQLParcela.UPDATE, [status, id_contrato,data_pag]));
     }on NoAlterException{
