@@ -37,7 +37,7 @@ class SQLContrato {
           "$_ID_CLIENTE INT REFERENCES ${SQLCliente.NAME_TABLE} (${SQLGeral.id}) NOT NULL,"
           "$_ID_PRODUTO INT REFERENCES ${SQLProduto.NAME_TABLE} (${SQLGeral.id}) NOT NULL,"
           "$_NUM_PARCLS INT NOT NULL, "
-          "$_DATA_CRIACAO DATE NOT NULL, "
+          "$_DATA_CRIACAO DATE DEFAULT CURRENT_DATE, "
           "$_QNT_PRODUTO INT NOT NULL, "
           "$_VALOR NUMERIC NOT NULL,"
           "$_DESCRICAO VARCHAR(200) NOT NULL,"
