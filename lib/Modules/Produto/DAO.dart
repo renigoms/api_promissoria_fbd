@@ -10,23 +10,28 @@ import 'package:sprintf/sprintf.dart';
 import '../../Service/exceptions.dart';
 
 class DAOProduto implements DAOUtilsI {
+  /// Acesso a Query que cria a tabela
   @override
   String createTable() => SQLProduto.CREATE_TABLE;
 
+  // Métodos GET
+  /// Todos os produtos
   @override
   Future<List<Map<String, dynamic>>> getAll() =>
       UtilsGeral.getSelectMapProduto(SQLProduto.SELECT_ALL);
 
+  /// produtos por id
   @override
   Future<List<Map<String, dynamic>>> getByID(String id) =>
       UtilsGeral.getSelectMapProduto(sprintf(SQLProduto.SELECT_BY_ID, [id]));
-
+  /// produtos por nome
   Future<List<Map<String, dynamic>>> getByName(String name) {
     final name_replace = name.replaceAll("%20", " ");
     return UtilsGeral.getSelectMapProduto(
         sprintf(SQLProduto.SELECT_BY_NAME, [name_replace]));
   }
 
+  /// Método post
   Future<bool> postCreate(Produto produto) async {
     try {
       if(produto.nome == null || produto.unid_medida == null
@@ -57,7 +62,7 @@ class DAOProduto implements DAOUtilsI {
       return false;
     }
   }
-
+  /// Método de update
   Future<bool> putUpdate(Produto produto, String id) async {
     try {
       // ignore: unnecessary_null_comparison
@@ -90,6 +95,7 @@ class DAOProduto implements DAOUtilsI {
     }
   }
 
+  /// Método de delete
   Future<bool> deleteProduto(String id) async {
     try {
       return await UtilsGeral.executeDelete(SQLProduto.DELETE, id);

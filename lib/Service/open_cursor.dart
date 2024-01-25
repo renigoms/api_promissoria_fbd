@@ -12,6 +12,7 @@ class Cursor {
     "password": "rngazrcb"
   };
 
+  /// Apenas faz execuções que não retornam informações
   static Future<bool> execute(String sqlComand) async {
     try {
       final cursor =
@@ -26,6 +27,7 @@ class Cursor {
     }
   }
 
+  /// Faz execuções com retorno de informações
   static Future<Result?> query(String sqlComand) async {
     try {
       final cursor =
@@ -37,6 +39,7 @@ class Cursor {
     }
   }
 
+  /// Cria todas as tabelas do banco caso não existam
   static Future<bool> initTables() async {
     try {
      return await execute(DAOClientes().createTable())&&

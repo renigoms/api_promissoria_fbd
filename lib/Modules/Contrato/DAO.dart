@@ -6,22 +6,24 @@ import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class DAOContrato implements DAOUtilsI {
+  // Acesso a Query de criacao da tabela
   @override
   String createTable() => SQLContrato.CREATE_TABLE;
-
+  // Métodos GET:
+  /// Todos os contratos
   @override
   Future<List<Map<String, dynamic>>> getAll() =>
       UtilsGeral.getSelectMapContrato(SQLContrato.SELECT_ALL);
-
+  /// Contratos por id
   @override
   Future<List<Map<String, dynamic>>> getByID(String id) =>
       UtilsGeral.getSelectMapContrato(sprintf(SQLContrato.SELECT_BY_ID, [id]));
-
+  /// contratos pelo cpf do cliente
   Future<List<Map<String, dynamic>>> getByClienteCPF(String cpf) {
     return UtilsGeral.getSelectMapContrato(
         sprintf(SQLContrato.SELECT_BY_CPF_CLIENTE, [cpf]));
   }
-
+  /// método post
   Future<bool> postCreate(Contrato contrato) async {
     try {
       if (contrato.id_cliente == null ||
@@ -57,7 +59,8 @@ class DAOContrato implements DAOUtilsI {
       return false;
     }
   }
-
+  /// Verificas se existe alguma parcela que esta nesse contrato que ainda esteja
+  /// em aberto
   Future<bool> _isFullParcelasPagas(String id) async {
     final listStatusParcela = await UtilsGeral.getSelectMapPacela(
         sprintf(SQLContrato.SELECT_STATUS_PACELAS, [id]));
@@ -67,7 +70,7 @@ class DAOContrato implements DAOUtilsI {
     }
     return true;
   }
-
+  /// deleta um contrato por id caso não haja parcelas em aberto
   Future<bool> delete(String id) async {
     try {
       if (await _isFullParcelasPagas(id)) {

@@ -1,4 +1,3 @@
-import 'package:postgres/legacy.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
@@ -12,21 +11,24 @@ class ClienteHandlerController implements ServerUtils {
   Router get router {
     final router = Router();
 
+    /// rota get sem parâmetro
     router.get(
         '/',
         (Request request) async =>
             ResponseUtils.getResponse(await DAOClientes().getAll()));
-
+    // rota get por id
     router.get(
         "/<id>",
         (Request request, String id) async =>
             ResponseUtils.getResponse(await DAOClientes().getByID(id)));
 
+    /// rota get por cpf
     router.get(
         "/cpf/<cpf>",
         (Request request, String cpf) async =>
             ResponseUtils.getResponse(await DAOClientes().getByCPF(cpf)));
 
+    /// rota post
     router.post('/', (Request request) async {
       try {
         return await DAOClientes().postCreate(Cliente.byMap(
@@ -46,6 +48,7 @@ class ClienteHandlerController implements ServerUtils {
       }
     });
 
+    // rota put por id
     router.put("/<id>", (Request request, String id) async {
       try {
         return await DAOClientes().putUpdate(
@@ -66,6 +69,7 @@ class ClienteHandlerController implements ServerUtils {
       }
     });
 
+    /// rota delete por id
     router.delete("/<id>", (Request request, String id) async {
       try {
         return await DAOClientes().delete(id)

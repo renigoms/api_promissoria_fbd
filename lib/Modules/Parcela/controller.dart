@@ -12,18 +12,20 @@ class ParcelaHandlerController implements ServerUtils {
   Router get router {
     final route = Router();
 
+    /// rota get pelo id do contrato
     route.get(
         "/<id_contrato>",
         (Request request, String id_contrato) async =>
             ResponseUtils.getResponse(
                 await DAOParcela().getByIdContrato(id_contrato)));
 
+    /// rota get pelo id do contrato e a data de quitação
     route.get(
         "/<id_contrato>/<data_pag>",
         (Request request, String id_contrato, String data_pag) async =>
             ResponseUtils.getResponse(
                 await DAOParcela().getByDataPag(id_contrato, data_pag)));
-
+    /// rota post
     route.post("/", (Request request) async {
       try {
         return await DAOParcela().postCreate(Contrato.byMap(
@@ -42,6 +44,7 @@ class ParcelaHandlerController implements ServerUtils {
       }
     });
 
+    /// update pelo id do contrato e a data de pagamento
     route.put('/<id_contrato>/<data_pag>',
         (Request request, String id_contrato, String data_pag) async {
       try {

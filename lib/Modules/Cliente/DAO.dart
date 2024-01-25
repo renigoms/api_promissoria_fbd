@@ -1,4 +1,3 @@
-import 'package:postgres/legacy.dart';
 import 'package:postgres/postgres.dart';
 import 'package:sistema_promissorias/Modules/Cliente/SQL.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
@@ -9,21 +8,26 @@ import 'package:sprintf/sprintf.dart';
 import 'model.dart';
 
 class DAOClientes implements DAOUtilsI {
+  // Acesso a Query de criacao da tabela
   @override
   String createTable() => SQLCliente.CREATE_TABLE;
-
+  // Métodos GET:
+  /// Todos os clientes
   @override
   Future<List<Map<String, dynamic>>> getAll() =>
       UtilsGeral.getSelectMapCliente(SQLCliente.SELECT_ALL);
 
+  /// Clientes por id
   @override
   Future<List<Map<String, dynamic>>> getByID(String id) =>
       UtilsGeral.getSelectMapCliente(sprintf(SQLCliente.SELECT_BY_ID, [id]));
 
+  /// Clientes por cpf
   Future<List<Map<String, dynamic>>> getByCPF(String cpf) =>
       UtilsGeral.getSelectMapCliente(
           sprintf(SQLCliente.SELECT_BY_CPF, [cpf]));
 
+  /// Adiciona um novo registro de cliente ao banco
   Future<bool> postCreate(Cliente cliente) async {
     try {
       if (cliente.nome_completo == null ||
@@ -51,7 +55,8 @@ class DAOClientes implements DAOUtilsI {
       return false;
     }
   }
-
+  /// Faz o update de um cliente passando um objeto cliente com as alterações
+  /// e o id do cliente que será alterado
   Future<bool> putUpdate(Cliente cliente, String id) async {
     try {
       // ignore: unnecessary_null_comparison
@@ -81,7 +86,7 @@ class DAOClientes implements DAOUtilsI {
       return false;
     }
   }
-
+  /// Deleta um cliente por id
   Future<bool> delete(String id) async {
     try {
       return await UtilsGeral.executeDelete(SQLCliente.DELETE, id);
