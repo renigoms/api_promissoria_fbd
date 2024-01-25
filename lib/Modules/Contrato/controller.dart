@@ -10,23 +10,23 @@ class ContratoHandlerController implements ServerUtils {
   // TODO: implement router
   Router get router {
     final route = Router();
-
+    /// rota get sem parâmetro
     route.get(
         "/",
         (Request request) async =>
             ResponseUtils.getResponse(await DAOContrato().getAll()));
-
+    /// rota get por id
     route.get(
         "/<id>",
         (Request request, String id) async =>
             ResponseUtils.getResponse(await DAOContrato().getByID(id)));
-
+    /// rota get por cpf
     route.get(
         "/cpf_cliente/<cpf>",
         (Request request, String cpf_cliente) async =>
             ResponseUtils.getResponse(
                 await DAOContrato().getByClienteCPF(cpf_cliente)));
-
+    /// rota post
     route.post("/", (Request request) async {
       try {
         return await DAOContrato().postCreate(Contrato.byMap(
@@ -43,6 +43,7 @@ class ContratoHandlerController implements ServerUtils {
       }
     });
 
+    /// rota delete
     route.delete("/<id>", (Request request, String id) async {
       try {
         return await DAOContrato().delete(id)

@@ -8,7 +8,7 @@ class ConnectDataBase {
   ConnectDataBase(this._database, this._username,
       this._password,{this.host = 'localhost'});
 
-
+  /// Construtor recebendo um mapa com ou sem host
   factory ConnectDataBase.connectionMap(Map dataMap){
     if (UtilsGeral.isKeysExists("host", dataMap)) {
       return ConnectDataBase(
@@ -25,6 +25,7 @@ class ConnectDataBase {
     );
   }
 
+  /// Estabelecendo conexão
   Future <Connection?> getConnection() async{
     try{
       return await Connection.open(Endpoint(

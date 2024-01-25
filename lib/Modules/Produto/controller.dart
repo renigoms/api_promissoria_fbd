@@ -13,22 +13,23 @@ class ProdutoControllerHandler implements ServerUtils {
   // TODO: implement router
   Router get router {
     final route = Router();
-
+    /// rota get sem parâmetro
     route.get(
         "/",
         (Request request) async =>
             ResponseUtils.getResponse(await DAOProduto().getAll()));
-
+    /// rota get por id
     route.get(
         "/<id>",
         (Request request, String id) async =>
             ResponseUtils.getResponse(await DAOProduto().getByID(id)));
-
+    /// rota get por nome
     route.get(
         "/nome/<nome>",
         (Request request, String nome) async =>
             ResponseUtils.getResponse(await DAOProduto().getByName(nome)));
 
+    // rota post
     route.post("/", (Request request) async {
       try {
         return await DAOProduto().postCreate(Produto.byMap(
@@ -47,7 +48,7 @@ class ProdutoControllerHandler implements ServerUtils {
             body: "Erro durante o cadastro do produto: $e");
       }
     });
-
+    //  rota put por id
     route.put("/<id>", (Request request, String id) async {
       try {
         return await DAOProduto().putUpdate(
@@ -67,6 +68,7 @@ class ProdutoControllerHandler implements ServerUtils {
       }
     });
 
+    /// rota delete por id
     route.delete("/<id>", (Request request, String id) async {
       try {
         return await DAOProduto().deleteProduto(id)

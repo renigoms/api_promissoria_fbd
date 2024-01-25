@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
+/// interface contendo get de router
 abstract interface class ServerUtils{
   Router get router;
 }

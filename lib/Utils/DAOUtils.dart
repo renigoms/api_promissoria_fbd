@@ -17,6 +17,7 @@ abstract interface class DAOUtilsI{
 }
 
 abstract class UtilsGeral{
+  // Verifica se uma determinada chave existe em Map
   static bool isKeysExists(String key, Map map) {
     for (String isKey in map.keys) {
       if (isKey == key) return true;
@@ -64,8 +65,11 @@ abstract class UtilsGeral{
     ];
   }
 
+  // Recebe dois valores, oldValue e newValue, se newValue não for nulo ele
+  // será retornado se não oldValue será retornado
   static dynamic getValUpdate(var oldValue, var newValue) => newValue ?? oldValue;
 
+  // ação de delete em um BD
   static Future<bool> executeDelete(String sqlDelete, String index) async{
     try {
       if (index.isEmpty) throw IDException();
