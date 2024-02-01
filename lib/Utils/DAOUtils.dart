@@ -4,7 +4,10 @@ import 'package:sistema_promissorias/Modules/Cliente/model.dart';
 import 'package:sistema_promissorias/Modules/Parcela/model.dart';
 import 'package:sprintf/sprintf.dart';
 
+import '../Modules/Cliente/DAO.dart';
+import '../Modules/Contrato/DAO.dart';
 import '../Modules/Contrato/model.dart';
+import '../Modules/Produto/DAO.dart';
 import '../Modules/Produto/model.dart';
 import '../Service/exceptions.dart';
 import '../Service/open_cursor.dart';
@@ -80,5 +83,21 @@ abstract class UtilsGeral{
     } catch (e) {
       rethrow;
     }
+  }
+
+  static Future<bool> isProductExists(String idProduct) async {
+    final getProduct = await DAOProduto().getByID(idProduct);
+    return getProduct.isEmpty;
+  }
+
+  static Future<bool> isClientExists(String idClient) async {
+    final getClient = await DAOClientes().getByID(idClient);
+    return getClient.isEmpty;
+  }
+
+  ///Verifica se o contrato existe na base
+  static Future<bool> isContractExists(String idContrato) async {
+    final getContrato = await DAOContrato().getByID(idContrato);
+    return getContrato.isEmpty;
   }
 }

@@ -30,6 +30,7 @@ class DAOClientes implements DAOUtilsI {
   /// Adiciona um novo registro de cliente ao banco
   Future<bool> postCreate(Cliente cliente) async {
     try {
+      if (cliente.id != null) throw IDException();
       if (cliente.nome_completo == null ||
           cliente.cpf == null ||
           cliente.email == null ||
@@ -50,7 +51,9 @@ class DAOClientes implements DAOUtilsI {
       return false;
     } on NullException {
       rethrow;
-    } catch (e) {
+    } on IDException{
+      rethrow;
+    }catch (e) {
       print("Erro $e ao salvar, tente novamente!");
       return false;
     }
@@ -63,6 +66,9 @@ class DAOClientes implements DAOUtilsI {
       if (id == null || id.isEmpty) throw IDException();
 
       if (cliente.id != null) return throw NoAlterException();
+
+      if (await UtilsGeral.isClientExists(id)) throw ClientException();
+
       List oldCliente = await getByID(id);
 
       String nomeCompleto = UtilsGeral.getValUpdate(
@@ -80,6 +86,8 @@ class DAOClientes implements DAOUtilsI {
       rethrow;
     } on NoAlterException {
       rethrow;
+    }on ClientException{
+      rethrow;
     } catch (e, s) {
       print("Erro durante o update, $e");
       print(s);
@@ -89,10 +97,13 @@ class DAOClientes implements DAOUtilsI {
   /// Deleta um cliente por id
   Future<bool> delete(String id) async {
     try {
+      if (await UtilsGeral.isClientExists(id)) throw ClientException();
       return await UtilsGeral.executeDelete(SQLCliente.DELETE, id);
     } on IDException {
       rethrow;
     } on PgException {
+      rethrow;
+    }on ClientException{
       rethrow;
     } catch (e) {
       print("Erro ao deletar, $e");

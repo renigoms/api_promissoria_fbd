@@ -25,8 +25,10 @@ abstract class SQLParcela {
           "$_DATA_CRIACAO_CONTRATO, $_VALOR_CONTRATO,"
           "$_PARCELAS_DEFINIDAS FROM ${SQLContrato.NAME_TABLE} "
           "WHERE ${SQLGeral.ID} = %s;",
-      SELECT_BY_DATA_PAG =
+      SELECT_BYCONTRATO_AND__DATA_PAG =
           "${SQLGeral.selectAll(NAME_TABLE)} WHERE $_ID_CONTRATO = %s AND $_DATA_PAG = '%s';",
+      SELECT_BY_DATA_PAG = "${SQLGeral.selectAll(NAME_TABLE)} "
+          "WHERE $_DATA_PAG = '%s';",
       CREATE = "INSERT INTO $NAME_TABLE ($_ID_CONTRATO, $_VALOR, $_DATA_PAG)"
           "VALUES (%s,%s,'%s')",
       UPDATE =
