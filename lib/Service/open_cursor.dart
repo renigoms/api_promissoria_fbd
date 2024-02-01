@@ -42,7 +42,7 @@ class Cursor {
   /// Cria todas as tabelas do banco caso não existam
   static Future<bool> initTables() async {
     try {
-     return await execute(DAOClientes().createTable())&&
+     return await execute(DAOCliente().createTable())&&
       await execute(DAOProduto().createTable())&&
       await execute(DAOContrato().createTable())&&
       await execute(DAOParcela().createTable());

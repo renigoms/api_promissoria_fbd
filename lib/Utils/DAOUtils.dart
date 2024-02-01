@@ -91,7 +91,7 @@ abstract class UtilsGeral{
   }
 
   static Future<bool> isClientExists(String idClient) async {
-    final getClient = await DAOClientes().getByID(idClient);
+    final getClient = await DAOCliente().getByID(idClient);
     return getClient.isEmpty;
   }
 
