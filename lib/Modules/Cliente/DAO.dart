@@ -7,7 +7,7 @@ import 'package:sprintf/sprintf.dart';
 
 import 'model.dart';
 
-class DAOClientes implements DAOUtilsI {
+class DAOCliente implements DAOUtilsI {
   // Acesso a Query de criacao da tabela
   @override
   String createTable() => SQLCliente.CREATE_TABLE;

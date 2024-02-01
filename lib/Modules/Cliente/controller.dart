@@ -5,6 +5,7 @@ import 'package:sistema_promissorias/Modules/Cliente/DAO.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
 import 'package:sistema_promissorias/Utils/ServerUtilsI.dart';
 
+import 'DAO.dart';
 import 'model.dart';
 
 class ClienteHandlerController implements ServerUtils {
@@ -15,23 +16,23 @@ class ClienteHandlerController implements ServerUtils {
     router.get(
         '/',
         (Request request) async =>
-            ResponseUtils.getResponse(await DAOClientes().getAll()));
+            ResponseUtils.getResponse(await DAOCliente().getAll()));
     // rota get por id
     router.get(
         "/<id>",
         (Request request, String id) async =>
-            ResponseUtils.getResponse(await DAOClientes().getByID(id)));
+            ResponseUtils.getResponse(await DAOCliente().getByID(id)));
 
     /// rota get por cpf
     router.get(
         "/cpf/<cpf>",
         (Request request, String cpf) async =>
-            ResponseUtils.getResponse(await DAOClientes().getByCPF(cpf)));
+            ResponseUtils.getResponse(await DAOCliente().getByCPF(cpf)));
 
     /// rota post
     router.post('/', (Request request) async {
       try {
-        return await DAOClientes().postCreate(Cliente.byMap(
+        return await DAOCliente().postCreate(Cliente.byMap(
                 ResponseUtils.dadosReqMap(await request.readAsString())))
             ? Response.ok("Cliente cadastrado com sucesso!")
             : Response.internalServerError(
@@ -56,7 +57,7 @@ class ClienteHandlerController implements ServerUtils {
     // rota put por id
     router.put("/<id>", (Request request, String id) async {
       try {
-        return await DAOClientes().putUpdate(
+        return await DAOCliente().putUpdate(
                 Cliente.byMap(
                     ResponseUtils.dadosReqMap(await request.readAsString())),
                 id)
@@ -81,7 +82,7 @@ class ClienteHandlerController implements ServerUtils {
     /// rota delete por id
     router.delete("/<id>", (Request request, String id) async {
       try {
-        return await DAOClientes().delete(id)
+        return await DAOCliente().delete(id)
             ? Response.ok("Cliente deletado com sucesso!")
             : Response.internalServerError(body: "Tentativa de delete falhou!");
       } on IDException {
