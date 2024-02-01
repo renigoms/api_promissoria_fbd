@@ -39,6 +39,10 @@ class ParcelaHandlerController implements ServerUtils {
       } on ParcelasDefinidasException {
         return Response.badRequest(
             body: "As parcelas desse contrato já foram definidas!");
+      }on ContractException{
+        return Response.badRequest(
+          body: "O contrato selecionado não existe na base!"
+        );
       } catch (e) {
         return Response.badRequest(body: "Erro ao gerar as parcelas: $e");
       }
@@ -62,6 +66,14 @@ class ParcelaHandlerController implements ServerUtils {
         return Response.badRequest(
             body: "Você deve passar o id do contrato "
                 "e a data da parcela que deseja alterar");
+      }on ContractException{
+        return Response.badRequest(
+            body: "O contrato selecionado não existe na base!"
+        );
+      }on InstallmentDateException{
+        return Response.badRequest(
+          body: "Nesse contrato, não existe uma parcela com essa data especificada!"
+        );
       } catch (e) {
         return Response.internalServerError(
             body: "Erro ao tentar realizar as alterações solicitadas!");

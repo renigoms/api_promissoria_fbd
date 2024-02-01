@@ -43,6 +43,11 @@ class ProdutoControllerHandler implements ServerUtils {
       } on NullException {
         return Response.badRequest(
             body: "Alguns atributos necessários não foram preenchidos!");
+      } on IDException{
+        return Response.badRequest(
+            body: "O ID é adicionado automaticamente, por isso "
+                "sua adição manual não é permitida!"
+        );
       } catch (e) {
         return Response.badRequest(
             body: "Erro durante o cadastro do produto: $e");
@@ -63,6 +68,10 @@ class ProdutoControllerHandler implements ServerUtils {
                 "O id deve ser passado junto com os dados que serão alterados");
       } on NoAlterException {
         return Response.badRequest(body: "O id não pode ser alterado!");
+      }on ProductException{
+        return Response.badRequest(
+          body: "O produto selecionado não existe na base!"
+        );
       } catch (e) {
         return Response.badRequest(body: "Falha no update: $e");
       }
@@ -81,6 +90,10 @@ class ProdutoControllerHandler implements ServerUtils {
         return Response.badRequest(
             body: "Não foi possível excluir o seguinte produto, pois ele faz "
                 "parte de um ou mais contratos ativos!");
+      } on ProductException{
+          return Response.badRequest(
+              body: "O produto selecionado não existe na base!"
+          );
       } catch (e) {
         return Response.badRequest(body: "Tentativa de delete falhou: $e");
       }

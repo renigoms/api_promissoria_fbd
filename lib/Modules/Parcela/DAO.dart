@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:intl/intl.dart';
+import 'package:sistema_promissorias/Modules/Contrato/DAO.dart';
 import 'package:sistema_promissorias/Modules/Contrato/SQL.dart';
 import 'package:sistema_promissorias/Modules/Parcela/SQL.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
@@ -23,12 +24,12 @@ class DAOParcela {
           sprintf(SQLParcela.SELECT_BY_ID_CONTRATO, [id_contrato]));
 
   Future<List<Map<String, dynamic>>> getByDataPag(
-          String id_contrato, String data_pag) =>
-      UtilsGeral.getSelectMapPacela(
-          sprintf(SQLParcela.SELECT_BY_DATA_PAG, [id_contrato, data_pag]));
+          String idContrato, String dataPag) =>
+      UtilsGeral.getSelectMapPacela(sprintf(
+          SQLParcela.SELECT_BYCONTRATO_AND__DATA_PAG, [idContrato, dataPag]));
 
   /// verifica a inexistência de atributos nulos no contrato
-  bool _IsNoAlterContrato(Contrato contrato) =>
+  bool _isNoAlterContrato(Contrato contrato) =>
       contrato.id_produto != null ||
       contrato.id_cliente != null ||
       contrato.num_parcelas != null ||
@@ -41,7 +42,11 @@ class DAOParcela {
   /// Método post
   Future<bool> postCreate(Contrato contrato) async {
     try {
-      if (_IsNoAlterContrato(contrato)) throw IDException();
+      if (_isNoAlterContrato(contrato)) throw IDException();
+
+      if (await UtilsGeral.isContractExists(contrato.id.toString())) {
+        throw ContractException();
+      }
 
       // mapa do contrato que receberar as parcelas
       final contratoMap = await UtilsGeral.getSelectMapContrato(
@@ -83,41 +88,60 @@ class DAOParcela {
       rethrow;
     } on ParcelasDefinidasException {
       rethrow;
+    } on ContractException {
+      rethrow;
     } catch (e) {
       print("Erro $e ao salvar, tente novamente!");
       return false;
     }
   }
+
   /// verifica a inexistência de atributos nulos em parcela exeto status
-  bool _IsNoAlterParcela(Parcela parcela) =>
+  bool _isNoAlterParcela(Parcela parcela) =>
       parcela.id != null ||
       parcela.id_contrato != null ||
       parcela.valor != null ||
       parcela.data_pag != null ||
       parcela.status == null;
 
+  Future<bool> _isInstallmentDateExists(String dataPag) async{
+    final query = sprintf(SQLParcela.SELECT_BY_DATA_PAG, [dataPag]),
+    getParcela = await UtilsGeral.getSelectMapPacela(query);
+    return getParcela.isEmpty;
+  }
+
   /// Apenas o status pode ser alterado na parcela
   Future<bool> putUpdate(
-      Parcela parcela, String id_contrato, String data_pag) async {
+      Parcela parcela, String idContrato, String dataPag) async {
     try {
-      if (id_contrato == null ||
-          id_contrato.isEmpty ||
-          data_pag == null ||
-          data_pag.isEmpty) {
+      if (idContrato == null ||
+          idContrato.isEmpty ||
+          dataPag == null ||
+          dataPag.isEmpty) {
         throw IDException();
       }
-      if (_IsNoAlterParcela(parcela)) throw NoAlterException();
+      if (_isNoAlterParcela(parcela)) throw NoAlterException();
 
-      final oldParcela = await getByDataPag(id_contrato, data_pag);
+      if (await UtilsGeral.isContractExists(idContrato)) {
+        throw ContractException();
+      }
+
+      if (await _isInstallmentDateExists(dataPag)) throw InstallmentDateException();
+
+      final oldParcela = await getByDataPag(idContrato, dataPag);
 
       String status =
           UtilsGeral.getValUpdate(oldParcela[0]['status'], parcela.status);
 
       return await Cursor.execute(
-          sprintf(SQLParcela.UPDATE, [status, id_contrato, data_pag]));
+          sprintf(SQLParcela.UPDATE, [status, idContrato, dataPag]));
     } on NoAlterException {
       rethrow;
     } on IDException {
+      rethrow;
+    } on ContractException {
+      rethrow;
+    }on InstallmentDateException{
       rethrow;
     } catch (e, s) {
       print("Erro durante o update, $e");

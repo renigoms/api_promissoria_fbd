@@ -42,6 +42,11 @@ class ClienteHandlerController implements ServerUtils {
       } on NullException {
         return Response.badRequest(
             body: "Alguns atributos não foram preenchidos!");
+      } on IDException{
+        return Response.badRequest(
+            body: "O ID é adicionado automaticamente, por isso "
+                "sua adição manual não é permitida!"
+        );
       } catch (e) {
         return Response.badRequest(
             body: "Erro durante o cadastro do cliente: $e");
@@ -64,7 +69,11 @@ class ClienteHandlerController implements ServerUtils {
       } on NoAlterException {
         return Response.badRequest(
             body: "O id do cliente não pode ser alterado!");
-      } catch (e) {
+      }on ClientException{
+        return Response.badRequest(
+          body: "O cliente selecionado não existe na base!"
+        );
+      }catch (e) {
         return Response.badRequest(body: "Falha no update: $e");
       }
     });
@@ -82,6 +91,10 @@ class ClienteHandlerController implements ServerUtils {
         return Response.badRequest(
             body:
                 "Não foi possível excluir o cliente, pois ele possui um ou mais contratos ativos");
+      }on ClientException{
+        return Response.badRequest(
+            body: "O cliente selecionado não existe na base!"
+        );
       } catch (e) {
         return Response.badRequest(body: "Tentativa de delete Falhou: $e");
       }

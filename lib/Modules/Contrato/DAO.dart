@@ -1,5 +1,7 @@
+import 'package:sistema_promissorias/Modules/Cliente/DAO.dart';
 import 'package:sistema_promissorias/Modules/Contrato/SQL.dart';
 import 'package:sistema_promissorias/Modules/Contrato/model.dart';
+import 'package:sistema_promissorias/Modules/Produto/DAO.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
 import 'package:sistema_promissorias/Service/open_cursor.dart';
 import 'package:sistema_promissorias/Utils/DAOUtils.dart';
@@ -14,35 +16,57 @@ class DAOContrato implements DAOUtilsI {
   @override
   Future<List<Map<String, dynamic>>> getAll() =>
       UtilsGeral.getSelectMapContrato(SQLContrato.SELECT_ALL);
+
   /// Contratos por id
   @override
   Future<List<Map<String, dynamic>>> getByID(String id) =>
       UtilsGeral.getSelectMapContrato(sprintf(SQLContrato.SELECT_BY_ID, [id]));
+
   /// contratos pelo cpf do cliente
   Future<List<Map<String, dynamic>>> getByClienteCPF(String cpf) {
     return UtilsGeral.getSelectMapContrato(
         sprintf(SQLContrato.SELECT_BY_CPF_CLIENTE, [cpf]));
   }
+
+  /// Verifica o preenchimentos de elementos automáticos
+  bool _isAutoElements(Contrato contrato) =>
+      contrato.id != null ||
+      contrato.valor != null ||
+      contrato.data_criacao != null ||
+      contrato.parcelas_definidas == true;
+
+  /// Verifica o preenchimento de elementos obrigatórios
+  bool _isRequeredElements(Contrato contrato) =>
+      contrato.id_cliente == null ||
+      contrato.id_produto == null ||
+      contrato.num_parcelas == null ||
+      contrato.descricao == null;
+
+
+
   /// método post
   Future<bool> postCreate(Contrato contrato) async {
     try {
-      if (contrato.id_cliente == null ||
-          contrato.id_produto == null ||
-          contrato.num_parcelas == null ||
-          contrato.descricao == null) {
-        throw NullException();
+      if (_isAutoElements(contrato)) throw AutoValueException();
+
+      if (_isRequeredElements(contrato)) throw NullException();
+
+      if (await UtilsGeral.isClientExists(contrato.id_cliente.toString())) {
+        throw ClientException();
       }
-      final valor_unit_and_porc_lucro = sprintf(
+
+      if (await UtilsGeral.isProductExists(contrato.id_produto.toString())) {
+        throw ProductException();
+      }
+
+      final valorUnitAndPorcLucro = sprintf(
           SQLContrato.SELECT_VAL_PORC_LUCRO_PRODUTO, [contrato.id_produto]);
 
-      final map =
-          await UtilsGeral.getSelectMapProduto(valor_unit_and_porc_lucro);
-
-      final qnt_produto = contrato.qnt_produto;
+      final map = await UtilsGeral.getSelectMapProduto(valorUnitAndPorcLucro);
 
       final valor =
           (map[0]['valor_unit'] * map[0]['porc_lucro'] + map[0]['valor_unit']) *
-              qnt_produto;
+              contrato.qnt_produto;
 
       return await Cursor.execute(sprintf(SQLContrato.CREATE, [
         contrato.id_cliente.toString(),
@@ -54,11 +78,18 @@ class DAOContrato implements DAOUtilsI {
       ]));
     } on NullException {
       rethrow;
+    } on AutoValueException {
+      rethrow;
+    } on ProductException {
+      rethrow;
+    } on ClientException {
+      rethrow;
     } catch (e) {
       print("Erro $e ao salvar, tente novamente!");
       return false;
     }
   }
+
   /// Verificas se existe alguma parcela que esta nesse contrato que ainda esteja
   /// em aberto
   Future<bool> _isFullParcelasPagas(String id) async {
@@ -70,16 +101,21 @@ class DAOContrato implements DAOUtilsI {
     }
     return true;
   }
+
   /// deleta um contrato por id caso não haja parcelas em aberto
-  Future<bool> delete(String id) async {
+  Future<bool> delete(String idContrato) async {
     try {
-      if (await _isFullParcelasPagas(id)) {
-        return await UtilsGeral.executeDelete(SQLContrato.DELETE, id);
+      if (await UtilsGeral.isContractExists(idContrato)) throw ContractException();
+
+      if (await _isFullParcelasPagas(idContrato)) {
+        return await UtilsGeral.executeDelete(SQLContrato.DELETE, idContrato);
       }
-      throw ParcelasEmAbertoExcerption();
-    } on ParcelasEmAbertoExcerption {
+      throw OpenInstallmentsException();
+    } on OpenInstallmentsException {
       rethrow;
     } on IDException {
+      rethrow;
+    }on ContractException{
       rethrow;
     } catch (e) {
       print("Erro ao deletar, $e");

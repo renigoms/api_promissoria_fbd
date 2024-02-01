@@ -34,6 +34,7 @@ class DAOProduto implements DAOUtilsI {
   /// Método post
   Future<bool> postCreate(Produto produto) async {
     try {
+      if (produto.id != null) throw IDException();
       if(produto.nome == null || produto.unid_medida == null
       || produto.valor_unit == null)throw NullException();
       String query = produto.porc_lucro == null
@@ -57,6 +58,8 @@ class DAOProduto implements DAOUtilsI {
       return false;
     }on NullException{
       rethrow;
+    }on IDException{
+      rethrow;
     } catch (e) {
       print("Erro $e ao salvar, tente novamente!");
       return false;
@@ -67,26 +70,31 @@ class DAOProduto implements DAOUtilsI {
     try {
       // ignore: unnecessary_null_comparison
       if (id == null || id.isEmpty) throw IDException();
+
+      if (await UtilsGeral.isProductExists(id)) throw ProductException();
+
       List oldProduto = await getByID(id);
 
       if(produto.id!=null)throw NoAlterException();
 
       String nome =
               UtilsGeral.getValUpdate(oldProduto[0]['nome'], produto.nome),
-          unid_medida = UtilsGeral.getValUpdate(
+          unidMedida = UtilsGeral.getValUpdate(
               oldProduto[0]['unid_medida'], produto.unid_medida),
-          valor_unit = UtilsGeral.getValUpdate(
+          valorUnit = UtilsGeral.getValUpdate(
                   oldProduto[0]['valor_unit'], produto.valor_unit)
               .toString(),
-          porc_lucro = UtilsGeral.getValUpdate(
+          porcLucro = UtilsGeral.getValUpdate(
                   oldProduto[0]['porc_lucro'], produto.porc_lucro)
               .toString();
 
       return await Cursor.execute(sprintf(
-          SQLProduto.UPDATE, [nome, unid_medida, valor_unit, porc_lucro, id]));
+          SQLProduto.UPDATE, [nome, unidMedida, valorUnit, porcLucro, id]));
     } on IDException {
       rethrow;
     }on NoAlterException{
+      rethrow;
+    }on ProductException{
       rethrow;
     } catch (e, s) {
       print("Erro durante o update, $e");
@@ -98,10 +106,13 @@ class DAOProduto implements DAOUtilsI {
   /// Método de delete
   Future<bool> deleteProduto(String id) async {
     try {
+      if (await UtilsGeral.isProductExists(id)) throw ProductException();
       return await UtilsGeral.executeDelete(SQLProduto.DELETE, id);
     } on IDException {
       rethrow;
     }on PgException{
+      rethrow;
+    }on ProductException{
       rethrow;
     } catch (e) {
       print("Erro ao deletar, $e");

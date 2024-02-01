@@ -9,8 +9,10 @@ import 'package:shelf_router/shelf_router.dart';
 abstract interface class ServerUtils{
   Router get router;
 }
-
+///Classe abstrata responsável por disponiblizar utilidades para
+///os Responses
 abstract class ResponseUtils{
+  /// Método que gera e retorna Responses
  static Response getResponse(List<Map<String, dynamic>> listMap) {
     try{
       return Response.ok(jsonEncode(listMap),
@@ -22,5 +24,6 @@ abstract class ResponseUtils{
     }
   }
 
+/// Método responsável por transformar JSON em MAP<String, dynamic>
  static Map<String,dynamic> dadosReqMap(String strReq) => jsonDecode(strReq);
 }
