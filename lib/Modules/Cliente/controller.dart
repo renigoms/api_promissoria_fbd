@@ -5,7 +5,6 @@ import 'package:sistema_promissorias/Modules/Cliente/DAO.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
 import 'package:sistema_promissorias/Utils/ServerUtilsI.dart';
 
-import 'DAO.dart';
 import 'model.dart';
 
 class ClienteHandlerController implements ServerUtils {

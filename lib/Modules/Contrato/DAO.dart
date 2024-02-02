@@ -1,7 +1,5 @@
-import 'package:sistema_promissorias/Modules/Cliente/DAO.dart';
 import 'package:sistema_promissorias/Modules/Contrato/SQL.dart';
 import 'package:sistema_promissorias/Modules/Contrato/model.dart';
-import 'package:sistema_promissorias/Modules/Produto/DAO.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
 import 'package:sistema_promissorias/Service/open_cursor.dart';
 import 'package:sistema_promissorias/Utils/DAOUtils.dart';

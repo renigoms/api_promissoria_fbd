@@ -1,4 +1,5 @@
-import 'package:postgres/legacy.dart';
+// ignore_for_file: implementation_imports
+
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/src/router.dart';
