@@ -1,5 +1,3 @@
-
-
 import 'package:sistema_promissorias/Modules/Cliente/model.dart';
 import 'package:sistema_promissorias/Modules/Parcela/model.dart';
 import 'package:sprintf/sprintf.dart';
@@ -12,14 +10,14 @@ import '../Modules/Produto/model.dart';
 import '../Service/exceptions.dart';
 import '../Service/open_cursor.dart';
 
-abstract interface class DAOUtilsI{
+abstract interface class DAOUtilsI {
   String createTable();
 
-  Future<List<Map<String, dynamic>>>getAll();
+  Future<List<Map<String, dynamic>>> getAll();
   Future<List<Map<String, dynamic>>> getByID(String id);
 }
 
-abstract class UtilsGeral{
+abstract class UtilsGeral {
   // Verifica se uma determinada chave existe em Map
   static bool isKeysExists(String key, Map map) {
     for (String isKey in map.keys) {
@@ -30,50 +28,43 @@ abstract class UtilsGeral{
 
   /// Método estático que tem como objetivo transformar o retorno de querys
   /// do tipo SELECT em uma lista de maps
-  static Future<List<Map<String, dynamic>>> getSelectMapCliente(String query) async {
+  static Future<List<Map<String, dynamic>>> _getSelectMap(String query) async {
     final dados = await Cursor.query(query);
-    final listMapDados = dados!.map((element) => element.toColumnMap()).toList();
-    return [
-      for (Map<String, dynamic> map in listMapDados) Cliente.byMap(map).toMap()
-    ];
+    return dados!.map((element) => element.toColumnMap()).toList();
   }
 
-  /// Método estático que tem como objetivo transformar o retorno de querys
-  /// do tipo SELECT em uma lista de maps
-  static Future<List<Map<String, dynamic>>> getSelectMapProduto(String query) async {
-    final dados = await Cursor.query(query);
-    final listMapDados = dados!.map((element) => element.toColumnMap()).toList();
-    return [
-      for (Map<String, dynamic> map in listMapDados) Produto.byMap(map).toMap()
+  ///ListMap Clinte
+  static Future<List<Map<String, dynamic>>> getSelectMapCliente(String query) async => 
+    [
+      for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query)) Cliente.byMap(map).toMap()
     ];
-  }
 
-  /// Método estático que tem como objetivo transformar o retorno de querys
-  /// do tipo SELECT em uma lista de maps
-  static Future<List<Map<String, dynamic>>> getSelectMapContrato(String query) async {
-    final dados = await Cursor.query(query);
-    final listMapDados = dados!.map((element) => element.toColumnMap()).toList();
-    return [
-      for (Map<String, dynamic> map in listMapDados) Contrato.byMap(map).toMap()
+  ///ListMap Produto
+  static Future<List<Map<String, dynamic>>> getSelectMapProduto(String query) async =>
+    [
+      for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query)) Produto.byMap(map).toMap()
     ];
-  }
 
-  /// Método estático que tem como objetivo transformar o retorno de querys
-  /// do tipo SELECT em uma lista de maps
-  static Future<List<Map<String, dynamic>>> getSelectMapPacela(String query) async {
-    final dados = await Cursor.query(query);
-    final listMapDados = dados!.map((element) => element.toColumnMap()).toList();
-    return [
-      for (Map<String, dynamic> map in listMapDados) Parcela.byMap(map).toMap()
+  ///ListMap Contrato
+  static Future<List<Map<String, dynamic>>> getSelectMapContrato(String query) async => 
+    [
+      for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query)) Contrato.byMap(map).toMap()
     ];
-  }
+  
+  ///ListMap Parcela
+  static Future<List<Map<String, dynamic>>> getSelectMapPacela(
+      String query) async =>
+    [
+      for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query)) Parcela.byMap(map).toMap()
+    ];
 
   // Recebe dois valores, oldValue e newValue, se newValue não for nulo ele
   // será retornado se não oldValue será retornado
-  static dynamic getValUpdate(var oldValue, var newValue) => newValue ?? oldValue;
+  static dynamic getValUpdate(var oldValue, var newValue) =>
+      newValue ?? oldValue;
 
   // ação de delete em um BD
-  static Future<bool> executeDelete(String sqlDelete, String index) async{
+  static Future<bool> executeDelete(String sqlDelete, String index) async {
     try {
       if (index.isEmpty) throw IDException();
       final query = sprintf(sqlDelete, [index]);
