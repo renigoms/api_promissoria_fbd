@@ -33,8 +33,7 @@ class ClienteHandlerController implements ServerUtils {
     router.post('/', (Request request) async {
       final map = ResponseUtils.dadosReqMap(await request.readAsString());
       try {
-        return await DAOCliente()
-                .postCreate(Cliente.byMap(map))
+        return await DAOCliente().postCreate(Cliente.byMap(map))
             ? Response.ok("Cliente cadastrado com sucesso!")
             : Response.internalServerError(
                 body: "Erro durante o cadastro detectado!");

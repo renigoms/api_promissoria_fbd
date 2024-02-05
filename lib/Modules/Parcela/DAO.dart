@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:intl/intl.dart';
+import 'package:sistema_promissorias/Modules/Contrato/DAO.dart';
 import 'package:sistema_promissorias/Modules/Contrato/SQL.dart';
 import 'package:sistema_promissorias/Modules/Parcela/SQL.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
@@ -29,14 +30,9 @@ class DAOParcela {
 
   /// verifica a inexistência de atributos nulos no contrato
   bool _isNoAlterContrato(Contrato contrato) =>
-      contrato.id_produto != null ||
-      contrato.id_cliente != null ||
-      contrato.num_parcelas != null ||
-      contrato.data_criacao != null ||
-      contrato.valor != null ||
+      UtilsGeral.isNullKeyMap(contrato.toMap(), DAOContrato().idOnly())||
       contrato.qnt_produto > 1 ||
-      contrato.descricao != null ||
-      contrato.parcelas_definidas != null;
+      contrato.parcelas_definidas != false;
 
   /// Método post
   Future<bool> postCreate(Contrato contrato) async {
@@ -95,17 +91,16 @@ class DAOParcela {
     }
   }
 
+  static List<String> autoItens() => SQLContrato.autoItens;
+
   /// verifica a inexistência de atributos nulos em parcela exeto status
-  bool _isNoAlterParcela(Parcela parcela) =>
-      parcela.id != null ||
-      parcela.id_contrato != null ||
-      parcela.valor != null ||
-      parcela.data_pag != null ||
+  bool _isStatusOnly(Parcela parcela) =>
+      UtilsGeral.isNotNullKeyMap(parcela.toMap(), autoItens()) ||
       parcela.status == null;
 
-  Future<bool> _isInstallmentDateExists(String dataPag) async{
+  Future<bool> _isInstallmentDateExists(String dataPag) async {
     final query = sprintf(SQLParcela.SELECT_BY_DATA_PAG, [dataPag]),
-    getParcela = await UtilsGeral.getSelectMapPacela(query);
+        getParcela = await UtilsGeral.getSelectMapPacela(query);
     return getParcela.isEmpty;
   }
 
@@ -119,13 +114,15 @@ class DAOParcela {
           dataPag.isEmpty) {
         throw IDException();
       }
-      if (_isNoAlterParcela(parcela)) throw NoAlterException();
+      if (_isStatusOnly(parcela)) throw NoAlterException();
 
       if (await UtilsGeral.isContractExists(idContrato)) {
         throw ContractException();
       }
 
-      if (await _isInstallmentDateExists(dataPag)) throw InstallmentDateException();
+      if (await _isInstallmentDateExists(dataPag)) {
+        throw InstallmentDateException();
+      }
 
       final oldParcela = await getByDataPag(idContrato, dataPag);
 
@@ -140,7 +137,7 @@ class DAOParcela {
       rethrow;
     } on ContractException {
       rethrow;
-    }on InstallmentDateException{
+    } on InstallmentDateException {
       rethrow;
     } catch (e, s) {
       print("Erro durante o update, $e");

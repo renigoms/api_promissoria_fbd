@@ -98,4 +98,20 @@ abstract class UtilsGeral {
     final getContrato = await DAOContrato().getByID(idContrato);
     return getContrato.isEmpty;
   }
+
+  static bool isNotNullKeyMap(
+      Map<String, dynamic> map, List<String> listRequeredElements) {
+    for (String camp in listRequeredElements) {
+      if (map[camp] == null) return true;
+    }
+    return false;
+  }
+
+  static bool isNullKeyMap(
+      Map<String, dynamic> map, List<String> listAutoElements) {
+    for (String camp in listAutoElements) {
+      if (map[camp] != null) return true;
+    }
+    return false;
+  }
 }

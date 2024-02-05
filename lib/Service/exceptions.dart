@@ -18,3 +18,5 @@ class ClientException implements Exception {}
 class ContractException implements Exception{}
 
 class InstallmentDateException implements Exception{}
+
+class ParcelaDefinidaException implements Exception{}

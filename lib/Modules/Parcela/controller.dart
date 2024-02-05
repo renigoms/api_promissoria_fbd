@@ -15,16 +15,16 @@ class ParcelaHandlerController implements ServerUtils {
     /// rota get pelo id do contrato
     route.get(
         "/<id_contrato>",
-        (Request request, String id_contrato) async =>
+        (Request request, String idContrato) async =>
             ResponseUtils.getResponse(
-                await DAOParcela().getByIdContrato(id_contrato)));
+                await DAOParcela().getByIdContrato(idContrato)));
 
     /// rota get pelo id do contrato e a data de quitação
     route.get(
         "/<id_contrato>/<data_pag>",
-        (Request request, String id_contrato, String data_pag) async =>
+        (Request request, String idContrato, String dataPag) async =>
             ResponseUtils.getResponse(
-                await DAOParcela().getByDataPag(id_contrato, data_pag)));
+                await DAOParcela().getByDataPag(idContrato, dataPag)));
     /// rota post
     route.post("/", (Request request) async {
       try {
@@ -50,13 +50,13 @@ class ParcelaHandlerController implements ServerUtils {
 
     /// update pelo id do contrato e a data de pagamento
     route.put('/<id_contrato>/<data_pag>',
-        (Request request, String id_contrato, String data_pag) async {
+        (Request request, String idContrato, String dataPag) async {
       try {
         return await DAOParcela().putUpdate(
                 Parcela.byMap(
                     ResponseUtils.dadosReqMap(await request.readAsString())),
-                id_contrato,
-                data_pag)
+                idContrato,
+                dataPag)
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
       } on NoAlterException {

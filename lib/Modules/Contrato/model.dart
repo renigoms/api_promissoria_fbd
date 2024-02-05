@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:intl/intl.dart';
 import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 import 'package:sistema_promissorias/Utils/SQLGeral.dart';
@@ -50,7 +52,9 @@ class Contrato {
               map['valor'] != null ? double.parse(map['valor']) : map['valor'],
           descricao: map['descricao'],
           data_criacao: map['data_criacao'] != null
-              ? DateFormat("dd-MM-yyyy").format(map['data_criacao'])
+              ? DateFormat("dd-MM-yyyy").format(
+              map['data_criacao'].runtimeType == String ? DateTime.parse(
+                  map['data_criacao']):map['data_criacao'])
               : map['data_criacao'],
           parcelas_definidas: map['parcelas_definidas']);
     }
