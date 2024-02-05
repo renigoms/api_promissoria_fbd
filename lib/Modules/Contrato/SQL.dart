@@ -48,4 +48,6 @@ abstract class SQLContrato {
           "INSERT INTO $NAME_TABLE ($_ID_CLIENTE, $_ID_PRODUTO, $_NUM_PARCLS, "
           "$_QNT_PRODUTO, $_VALOR, $_DESCRICAO) VALUES (%s,%s,%s,%s,%s,'%s')",
       DELETE = SQLGeral.deleteSQL(NAME_TABLE);
+
+  static List<String> requeredItens = [_ID_CLIENTE, _ID_PRODUTO, _NUM_PARCLS, _QNT_PRODUTO, _DESCRICAO];
 }

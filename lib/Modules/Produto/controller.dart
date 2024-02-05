@@ -14,16 +14,19 @@ class ProdutoControllerHandler implements ServerUtils {
   // TODO: implement router
   Router get router {
     final route = Router();
+
     /// rota get sem parâmetro
     route.get(
         "/",
         (Request request) async =>
             ResponseUtils.getResponse(await DAOProduto().getAll()));
+
     /// rota get por id
     route.get(
         "/<id>",
         (Request request, String id) async =>
             ResponseUtils.getResponse(await DAOProduto().getByID(id)));
+
     /// rota get por nome
     route.get(
         "/nome/<nome>",
@@ -32,9 +35,9 @@ class ProdutoControllerHandler implements ServerUtils {
 
     // rota post
     route.post("/", (Request request) async {
+      final map = ResponseUtils.dadosReqMap(await request.readAsString());
       try {
-        return await DAOProduto().postCreate(Produto.byMap(
-                ResponseUtils.dadosReqMap(await request.readAsString())))
+        return await DAOProduto().postCreate(Produto.byMap(map))
             ? Response.ok("Produto cadastrado com sucesso!")
             : Response.internalServerError(
                 body: "Erro durante o cadastro detectado!");
@@ -43,12 +46,11 @@ class ProdutoControllerHandler implements ServerUtils {
             body: "Opa, Já existe um produto com o mesmo nome!");
       } on NullException {
         return Response.badRequest(
-            body: "Alguns atributos necessários não foram preenchidos!");
-      } on IDException{
+            body: ResponseUtils.requeredItensMessage(DAOProduto().requeredItens(), map));
+      } on IDException {
         return Response.badRequest(
             body: "O ID é adicionado automaticamente, por isso "
-                "sua adição manual não é permitida!"
-        );
+                "sua adição manual não é permitida!");
       } catch (e) {
         return Response.badRequest(
             body: "Erro durante o cadastro do produto: $e");
@@ -69,10 +71,9 @@ class ProdutoControllerHandler implements ServerUtils {
                 "O id deve ser passado junto com os dados que serão alterados");
       } on NoAlterException {
         return Response.badRequest(body: "O id não pode ser alterado!");
-      }on ProductException{
+      } on ProductException {
         return Response.badRequest(
-          body: "O produto selecionado não existe na base!"
-        );
+            body: "O produto selecionado não existe na base!");
       } catch (e) {
         return Response.badRequest(body: "Falha no update: $e");
       }
@@ -91,10 +92,9 @@ class ProdutoControllerHandler implements ServerUtils {
         return Response.badRequest(
             body: "Não foi possível excluir o seguinte produto, pois ele faz "
                 "parte de um ou mais contratos ativos!");
-      } on ProductException{
-          return Response.badRequest(
-              body: "O produto selecionado não existe na base!"
-          );
+      } on ProductException {
+        return Response.badRequest(
+            body: "O produto selecionado não existe na base!");
       } catch (e) {
         return Response.badRequest(body: "Tentativa de delete falhou: $e");
       }

@@ -40,7 +40,8 @@ class DAOContrato implements DAOUtilsI {
       contrato.num_parcelas == null ||
       contrato.descricao == null;
 
-
+  @override
+  List<String> requeredItens() => SQLContrato.requeredItens;
 
   /// método post
   Future<bool> postCreate(Contrato contrato) async {
@@ -103,7 +104,9 @@ class DAOContrato implements DAOUtilsI {
   /// deleta um contrato por id caso não haja parcelas em aberto
   Future<bool> delete(String idContrato) async {
     try {
-      if (await UtilsGeral.isContractExists(idContrato)) throw ContractException();
+      if (await UtilsGeral.isContractExists(idContrato)) {
+        throw ContractException();
+      }
 
       if (await _isFullParcelasPagas(idContrato)) {
         return await UtilsGeral.executeDelete(SQLContrato.DELETE, idContrato);
@@ -113,7 +116,7 @@ class DAOContrato implements DAOUtilsI {
       rethrow;
     } on IDException {
       rethrow;
-    }on ContractException{
+    } on ContractException {
       rethrow;
     } catch (e) {
       print("Erro ao deletar, $e");

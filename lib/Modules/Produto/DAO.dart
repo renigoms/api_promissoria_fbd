@@ -26,10 +26,13 @@ class DAOProduto implements DAOUtilsI {
       UtilsGeral.getSelectMapProduto(sprintf(SQLProduto.SELECT_BY_ID, [id]));
   /// produtos por nome
   Future<List<Map<String, dynamic>>> getByName(String name) {
-    final name_replace = name.replaceAll("%20", " ");
+    final nameReplace = name.replaceAll("%20", " ");
     return UtilsGeral.getSelectMapProduto(
-        sprintf(SQLProduto.SELECT_BY_NAME, [name_replace]));
+        sprintf(SQLProduto.SELECT_BY_NAME, [nameReplace]));
   }
+
+  @override
+  List<String> requeredItens() => SQLProduto.requeredItens;
 
   /// Método post
   Future<bool> postCreate(Produto produto) async {
@@ -119,4 +122,5 @@ class DAOProduto implements DAOUtilsI {
       return false;
     }
   }
+  
 }

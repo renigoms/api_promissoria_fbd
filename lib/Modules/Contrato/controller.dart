@@ -33,15 +33,15 @@ class ContratoHandlerController implements ServerUtils {
 
     /// rota post
     route.post("/", (Request request) async {
+      final map = ResponseUtils.dadosReqMap(await request.readAsString());
       try {
-        return await DAOContrato().postCreate(Contrato.byMap(
-                ResponseUtils.dadosReqMap(await request.readAsString())))
+        return await DAOContrato()
+                .postCreate(Contrato.byMap(map))
             ? Response.ok("Contrato gerado com sucesso!")
             : Response.internalServerError(body: "Erro ao gerar contrato!");
       } on NullException {
         return Response.badRequest(
-            body: "Alguns atributos necessários "
-                "não foram preenchidos!");
+            body: ResponseUtils.requeredItensMessage(DAOContrato().requeredItens(), map));
       } on AutoValueException {
         return Response.badRequest(
             body: "ID, valor, data_criacao e parcelas_definidas são definidos"
@@ -52,8 +52,7 @@ class ContratoHandlerController implements ServerUtils {
             body: "O produto selecionado não existe na base!");
       } on ClientException {
         return Response.badRequest(
-          body: "O cliente selecionado não existe na base!"
-        );
+            body: "O cliente selecionado não existe na base!");
       } catch (e) {
         return Response.badRequest(body: "Erro ao gerar contrato: $e");
       }
@@ -72,10 +71,9 @@ class ContratoHandlerController implements ServerUtils {
       } on OpenInstallmentsException {
         return Response.badRequest(
             body: "Ainda existem parcelas em aberto nesse contrato!");
-      }on ContractException{
+      } on ContractException {
         return Response.badRequest(
-            body: "O contrato selecionado não existe na base!"
-        );
+            body: "O contrato selecionado não existe na base!");
       } catch (e) {
         return Response.badRequest(body: "Erro ao deletar: $e");
       }

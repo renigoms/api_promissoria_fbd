@@ -24,8 +24,10 @@ class DAOCliente implements DAOUtilsI {
 
   /// Clientes por cpf
   Future<List<Map<String, dynamic>>> getByCPF(String cpf) =>
-      UtilsGeral.getSelectMapCliente(
-          sprintf(SQLCliente.SELECT_BY_CPF, [cpf]));
+      UtilsGeral.getSelectMapCliente(sprintf(SQLCliente.SELECT_BY_CPF, [cpf]));
+
+  @override
+  List<String> requeredItens() => SQLCliente.requeredItens;
 
   /// Adiciona um novo registro de cliente ao banco
   Future<bool> postCreate(Cliente cliente) async {
@@ -51,13 +53,14 @@ class DAOCliente implements DAOUtilsI {
       return false;
     } on NullException {
       rethrow;
-    } on IDException{
+    } on IDException {
       rethrow;
-    }catch (e) {
+    } catch (e) {
       print("Erro $e ao salvar, tente novamente!");
       return false;
     }
   }
+
   /// Faz o update de um cliente passando um objeto cliente com as alterações
   /// e o id do cliente que será alterado
   Future<bool> putUpdate(Cliente cliente, String id) async {
@@ -86,7 +89,7 @@ class DAOCliente implements DAOUtilsI {
       rethrow;
     } on NoAlterException {
       rethrow;
-    }on ClientException{
+    } on ClientException {
       rethrow;
     } catch (e, s) {
       print("Erro durante o update, $e");
@@ -94,6 +97,7 @@ class DAOCliente implements DAOUtilsI {
       return false;
     }
   }
+
   /// Deleta um cliente por id
   Future<bool> delete(String id) async {
     try {
@@ -103,7 +107,7 @@ class DAOCliente implements DAOUtilsI {
       rethrow;
     } on PgException {
       rethrow;
-    }on ClientException{
+    } on ClientException {
       rethrow;
     } catch (e) {
       print("Erro ao deletar, $e");
