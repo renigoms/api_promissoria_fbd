@@ -33,10 +33,7 @@ class DAOCliente implements DAOUtilsI {
   Future<bool> postCreate(Cliente cliente) async {
     try {
       if (cliente.id != null) throw IDException();
-      if (cliente.nome_completo == null ||
-          cliente.cpf == null ||
-          cliente.email == null ||
-          cliente.telefone == null) {
+      if (UtilsGeral.isNotNullKeyMap(cliente.toMap(), requeredItens())) {
         throw NullException();
       }
       return await Cursor.execute(sprintf(SQLCliente.CREATE, [

@@ -5,6 +5,7 @@ import 'package:shelf_router/src/router.dart';
 import 'package:sistema_promissorias/Modules/Contrato/DAO.dart';
 import 'package:sistema_promissorias/Modules/Contrato/model.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
+import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 import 'package:sistema_promissorias/Utils/ServerUtilsI.dart';
 
 class ContratoHandlerController implements ServerUtils {
@@ -27,14 +28,17 @@ class ContratoHandlerController implements ServerUtils {
     /// rota get por cpf
     route.get(
         "/cpf_cliente/<cpf>",
-        (Request request, String cpf_cliente) async =>
+        (Request request, String cpfCliente) async =>
             ResponseUtils.getResponse(
-                await DAOContrato().getByClienteCPF(cpf_cliente)));
+                await DAOContrato().getByClienteCPF(cpfCliente)));
 
     /// rota post
     route.post("/", (Request request) async {
       final map = ResponseUtils.dadosReqMap(await request.readAsString());
       try {
+        if (UtilsGeral.isKeysExists("parcela_definida", map)) {
+          throw ParcelaDefinidaException();
+        }
         return await DAOContrato()
                 .postCreate(Contrato.byMap(map))
             ? Response.ok("Contrato gerado com sucesso!")
@@ -44,15 +48,18 @@ class ContratoHandlerController implements ServerUtils {
             body: ResponseUtils.requeredItensMessage(DAOContrato().requeredItens(), map));
       } on AutoValueException {
         return Response.badRequest(
-            body: "ID, valor, data_criacao e parcelas_definidas são definidos"
-                "automaticamente por isso não podem ser adicionados de forma "
-                "manual!");
+            body: ResponseUtils.autoItensMessage(DAOContrato().autoItens(), map));
       } on ProductException {
         return Response.badRequest(
             body: "O produto selecionado não existe na base!");
       } on ClientException {
         return Response.badRequest(
             body: "O cliente selecionado não existe na base!");
+      }on ParcelaDefinidaException{
+        return Response.badRequest(
+          body: "O campo da parcela_definida é estabelecido automaticamente. Portando,"
+              "não é permitido adiciona-lo de forma manual!"
+        );
       } catch (e) {
         return Response.badRequest(body: "Erro ao gerar contrato: $e");
       }

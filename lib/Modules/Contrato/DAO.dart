@@ -26,29 +26,21 @@ class DAOContrato implements DAOUtilsI {
         sprintf(SQLContrato.SELECT_BY_CPF_CLIENTE, [cpf]));
   }
 
-  /// Verifica o preenchimentos de elementos automáticos
-  bool _isAutoElements(Contrato contrato) =>
-      contrato.id != null ||
-      contrato.valor != null ||
-      contrato.data_criacao != null ||
-      contrato.parcelas_definidas == true;
-
-  /// Verifica o preenchimento de elementos obrigatórios
-  bool _isRequeredElements(Contrato contrato) =>
-      contrato.id_cliente == null ||
-      contrato.id_produto == null ||
-      contrato.num_parcelas == null ||
-      contrato.descricao == null;
-
   @override
   List<String> requeredItens() => SQLContrato.requeredItens;
+
+  List<String> autoItens() => SQLContrato.autoItens;
+
+  List<String> idOnly() => SQLContrato.idOnly;
 
   /// método post
   Future<bool> postCreate(Contrato contrato) async {
     try {
-      if (_isAutoElements(contrato)) throw AutoValueException();
+      if (UtilsGeral.isNullKeyMap(contrato.toMap(), autoItens())) throw AutoValueException();
 
-      if (_isRequeredElements(contrato)) throw NullException();
+      if (UtilsGeral.isNotNullKeyMap(contrato.toMap(), requeredItens())) {
+        throw NullException();
+      }
 
       if (await UtilsGeral.isClientExists(contrato.id_cliente.toString())) {
         throw ClientException();
@@ -82,6 +74,8 @@ class DAOContrato implements DAOUtilsI {
     } on ProductException {
       rethrow;
     } on ClientException {
+      rethrow;
+    }on ParcelaDefinidaException{
       rethrow;
     } catch (e) {
       print("Erro $e ao salvar, tente novamente!");

@@ -36,4 +36,11 @@ abstract class ResponseUtils {
     }
     return "";
   }
+  static String autoItensMessage(
+      List<String> listRequered, Map<String, dynamic> jsonRequest) {
+    for (String camp in listRequered) {
+      if (jsonRequest[camp] != null) return "O campo $camp é definido automaticamente. Sua adição manual não é permitida !";
+    }
+    return "";
+  }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, prefer_final_fields
+
 import 'package:sistema_promissorias/Modules/Contrato/SQL.dart';
 import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 
@@ -33,4 +35,6 @@ abstract class SQLParcela {
           "VALUES (%s,%s,'%s')",
       UPDATE =
           "UPDATE $NAME_TABLE SET $_STATUS = '%s' WHERE $_ID_CONTRATO = %s AND $_DATA_PAG = '%s';";
+
+  static List<String> autoItens = [SQLGeral.ID, _ID_CONTRATO, _VALOR, _DATA_PAG];
 }
