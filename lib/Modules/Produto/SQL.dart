@@ -23,4 +23,6 @@ abstract class SQLProduto {
       UPDATE = "UPDATE $NAME_TABLE SET $_NAME = '%s', $_UNID_MEDIDA = '%s',"
           "$_VALOR_UNIT = %s, $_PORCENT_LUCRO = %s WHERE ${SQLGeral.ID} = %s;",
       DELETE = SQLGeral.deleteSQL(NAME_TABLE);
+
+  static List<String> requeredItens = [_NAME, _UNID_MEDIDA, _VALOR_UNIT, _PORCENT_LUCRO];
 }

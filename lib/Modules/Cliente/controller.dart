@@ -8,6 +8,7 @@ import 'package:sistema_promissorias/Utils/ServerUtilsI.dart';
 import 'model.dart';
 
 class ClienteHandlerController implements ServerUtils {
+  @override
   Router get router {
     final router = Router();
 
@@ -30,9 +31,10 @@ class ClienteHandlerController implements ServerUtils {
 
     /// rota post
     router.post('/', (Request request) async {
+      final map = ResponseUtils.dadosReqMap(await request.readAsString());
       try {
-        return await DAOCliente().postCreate(Cliente.byMap(
-                ResponseUtils.dadosReqMap(await request.readAsString())))
+        return await DAOCliente()
+                .postCreate(Cliente.byMap(map))
             ? Response.ok("Cliente cadastrado com sucesso!")
             : Response.internalServerError(
                 body: "Erro durante o cadastro detectado!");
@@ -41,12 +43,12 @@ class ClienteHandlerController implements ServerUtils {
             body: "Opa, Já existe um cliente com o mesmo CPF que o seu!");
       } on NullException {
         return Response.badRequest(
-            body: "Alguns atributos não foram preenchidos!");
-      } on IDException{
+            body:
+                ResponseUtils.requeredItensMessage(DAOCliente().requeredItens(), map));
+      } on IDException {
         return Response.badRequest(
             body: "O ID é adicionado automaticamente, por isso "
-                "sua adição manual não é permitida!"
-        );
+                "sua adição manual não é permitida!");
       } catch (e) {
         return Response.badRequest(
             body: "Erro durante o cadastro do cliente: $e");
@@ -69,11 +71,10 @@ class ClienteHandlerController implements ServerUtils {
       } on NoAlterException {
         return Response.badRequest(
             body: "O id do cliente não pode ser alterado!");
-      }on ClientException{
+      } on ClientException {
         return Response.badRequest(
-          body: "O cliente selecionado não existe na base!"
-        );
-      }catch (e) {
+            body: "O cliente selecionado não existe na base!");
+      } catch (e) {
         return Response.badRequest(body: "Falha no update: $e");
       }
     });
@@ -91,10 +92,9 @@ class ClienteHandlerController implements ServerUtils {
         return Response.badRequest(
             body:
                 "Não foi possível excluir o cliente, pois ele possui um ou mais contratos ativos");
-      }on ClientException{
+      } on ClientException {
         return Response.badRequest(
-            body: "O cliente selecionado não existe na base!"
-        );
+            body: "O cliente selecionado não existe na base!");
       } catch (e) {
         return Response.badRequest(body: "Tentativa de delete Falhou: $e");
       }

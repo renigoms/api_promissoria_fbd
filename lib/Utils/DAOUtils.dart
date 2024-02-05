@@ -12,9 +12,9 @@ import '../Service/open_cursor.dart';
 
 abstract interface class DAOUtilsI {
   String createTable();
-
   Future<List<Map<String, dynamic>>> getAll();
   Future<List<Map<String, dynamic>>> getByID(String id);
+  List<String> requeredItens();
 }
 
 abstract class UtilsGeral {
@@ -34,29 +34,36 @@ abstract class UtilsGeral {
   }
 
   ///ListMap Clinte
-  static Future<List<Map<String, dynamic>>> getSelectMapCliente(String query) async => 
-    [
-      for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query)) Cliente.byMap(map).toMap()
-    ];
+  static Future<List<Map<String, dynamic>>> getSelectMapCliente(
+          String query) async =>
+      [
+        for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query))
+          Cliente.byMap(map).toMap()
+      ];
 
   ///ListMap Produto
-  static Future<List<Map<String, dynamic>>> getSelectMapProduto(String query) async =>
-    [
-      for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query)) Produto.byMap(map).toMap()
-    ];
+  static Future<List<Map<String, dynamic>>> getSelectMapProduto(
+          String query) async =>
+      [
+        for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query))
+          Produto.byMap(map).toMap()
+      ];
 
   ///ListMap Contrato
-  static Future<List<Map<String, dynamic>>> getSelectMapContrato(String query) async => 
-    [
-      for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query)) Contrato.byMap(map).toMap()
-    ];
-  
+  static Future<List<Map<String, dynamic>>> getSelectMapContrato(
+          String query) async =>
+      [
+        for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query))
+          Contrato.byMap(map).toMap()
+      ];
+
   ///ListMap Parcela
   static Future<List<Map<String, dynamic>>> getSelectMapPacela(
-      String query) async =>
-    [
-      for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query)) Parcela.byMap(map).toMap()
-    ];
+          String query) async =>
+      [
+        for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query))
+          Parcela.byMap(map).toMap()
+      ];
 
   // Recebe dois valores, oldValue e newValue, se newValue não for nulo ele
   // será retornado se não oldValue será retornado
