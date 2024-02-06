@@ -32,7 +32,7 @@ class DAOParcela {
   bool _isNoAlterContrato(Contrato contrato) =>
       UtilsGeral.isNullKeyMap(contrato.toMap(), DAOContrato().idOnly())||
       contrato.qnt_produto > 1 ||
-      contrato.parcelas_definidas != false;
+      contrato.parcelas_definidas == true;
 
   /// Método post
   Future<bool> postCreate(Contrato contrato) async {
@@ -91,11 +91,11 @@ class DAOParcela {
     }
   }
 
-  static List<String> autoItens() => SQLContrato.autoItens;
+  static List<String> autoItens() => SQLParcela.autoItens;
 
   /// verifica a inexistência de atributos nulos em parcela exeto status
   bool _isStatusOnly(Parcela parcela) =>
-      UtilsGeral.isNotNullKeyMap(parcela.toMap(), autoItens()) ||
+      UtilsGeral.isNullKeyMap(parcela.toMap(), autoItens()) ||
       parcela.status == null;
 
   Future<bool> _isInstallmentDateExists(String dataPag) async {
