@@ -3,7 +3,8 @@ import 'package:sistema_promissorias/Service/open_cursor.dart';
 import 'package:sistema_promissorias/Service/servidor.dart';
 
 void main() async{
-  /// Cria as tabelas de um banco de dados caso ainda não exista
+  /// Cria 
+  /// as tabelas de um banco de dados caso ainda não exista
   await Cursor.initTables();
   //Objeto da rota
   final handler = GeneralController().handler;

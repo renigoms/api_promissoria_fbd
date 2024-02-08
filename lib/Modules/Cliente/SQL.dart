@@ -27,6 +27,8 @@ abstract class SQLCliente {
 
       SELECT_BY_CPF = "$SELECT_ALL WHERE $_CPF ILIKE '%s';",
 
+      SELECT_BY_NOME = "$SELECT_ALL WHERE $_NOME_COMPLETO ILIKE '%s';",
+
       CREATE = "INSERT INTO $NAME_TABLE ($_NOME_COMPLETO,"
           " $_CPF, $_EMAIL, $_TELEFONE) VALUES ('%s','%s','%s','%s');",
 

@@ -27,7 +27,12 @@ class ClienteHandlerController implements ServerUtils {
     router.get(
         "/cpf/<cpf>",
         (Request request, String cpf) async =>
-            ResponseUtils.getResponse(await DAOCliente().getByCPF(cpf)));
+           ResponseUtils.getResponse(await DAOCliente().getByCPF(cpf)));
+    
+    /// rota get por nome
+    router.get("/nome/<nome>",(Request request, String nome) async =>
+                ResponseUtils.getResponse(await DAOCliente().getByName(nome)));
+
 
     /// rota post
     router.post('/', (Request request) async {

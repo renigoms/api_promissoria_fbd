@@ -23,6 +23,7 @@ abstract class SQLProduto {
       SELECT_ALL = SQLGeral.selectAll(NAME_TABLE),
 
       SELECT_BY_ID = "$SELECT_ALL WHERE ${SQLGeral.ID} = %s",
+      // Essa notação %-%s-% server para retorno contendo tal elemento
 
       SELECT_BY_NAME = "$SELECT_ALL WHERE $_NAME ILIKE '%s';",
 
