@@ -1,5 +1,3 @@
-
-
 import 'package:postgres/postgres.dart';
 import 'package:sistema_promissorias/Modules/Produto/SQL.dart';
 import 'package:sistema_promissorias/Modules/Produto/model.dart';
@@ -24,11 +22,12 @@ class DAOProduto implements DAOUtilsI {
   @override
   Future<List<Map<String, dynamic>>> getByID(String id) =>
       UtilsGeral.getSelectMapProduto(sprintf(SQLProduto.SELECT_BY_ID, [id]));
+
   /// produtos por nome
   Future<List<Map<String, dynamic>>> getByName(String name) {
     final nameReplace = name.replaceAll("%20", " ");
     return UtilsGeral.getSelectMapProduto(
-        sprintf(SQLProduto.SELECT_BY_NAME, [nameReplace]));
+        sprintf(SQLProduto.SELECT_BY_NAME, [UtilsGeral.addSides("%", nameReplace)]));
   }
 
   @override
@@ -38,8 +37,9 @@ class DAOProduto implements DAOUtilsI {
   Future<bool> postCreate(Produto produto) async {
     try {
       if (produto.id != null) throw IDException();
-      if(produto.nome == null || produto.unid_medida == null
-      || produto.valor_unit == null)throw NullException();
+      if (produto.nome == null ||
+          produto.unid_medida == null ||
+          produto.valor_unit == null) throw NullException();
       String query = produto.porc_lucro == null
           ? sprintf(SQLProduto.CREATE_WITH_PORC_LUCRO_DEFAULT, [
               produto.nome,
@@ -59,15 +59,16 @@ class DAOProduto implements DAOUtilsI {
         rethrow;
       }
       return false;
-    }on NullException{
+    } on NullException {
       rethrow;
-    }on IDException{
+    } on IDException {
       rethrow;
     } catch (e) {
       print("Erro $e ao salvar, tente novamente!");
       return false;
     }
   }
+
   /// Método de update
   Future<bool> putUpdate(Produto produto, String id) async {
     try {
@@ -78,7 +79,7 @@ class DAOProduto implements DAOUtilsI {
 
       List oldProduto = await getByID(id);
 
-      if(produto.id!=null)throw NoAlterException();
+      if (produto.id != null) throw NoAlterException();
 
       String nome =
               UtilsGeral.getValUpdate(oldProduto[0]['nome'], produto.nome),
@@ -93,11 +94,13 @@ class DAOProduto implements DAOUtilsI {
 
       return await Cursor.execute(sprintf(
           SQLProduto.UPDATE, [nome, unidMedida, valorUnit, porcLucro, id]));
+    } on PgException {
+      rethrow;
     } on IDException {
       rethrow;
-    }on NoAlterException{
+    } on NoAlterException {
       rethrow;
-    }on ProductException{
+    } on ProductException {
       rethrow;
     } catch (e, s) {
       print("Erro durante o update, $e");
@@ -113,14 +116,13 @@ class DAOProduto implements DAOUtilsI {
       return await UtilsGeral.executeDelete(SQLProduto.DELETE, id);
     } on IDException {
       rethrow;
-    }on PgException{
+    } on PgException {
       rethrow;
-    }on ProductException{
+    } on ProductException {
       rethrow;
     } catch (e) {
       print("Erro ao deletar, $e");
       return false;
     }
   }
-  
 }

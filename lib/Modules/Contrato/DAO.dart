@@ -36,9 +36,11 @@ class DAOContrato implements DAOUtilsI {
   /// método post
   Future<bool> postCreate(Contrato contrato) async {
     try {
-      if (UtilsGeral.isNullKeyMap(contrato.toMap(), autoItens())) throw AutoValueException();
+      if (UtilsGeral.isKeyMapNull(contrato.toMap(), autoItens())) {
+        throw AutoValueException();
+      }
 
-      if (UtilsGeral.isNotNullKeyMap(contrato.toMap(), requeredItens())) {
+      if (UtilsGeral.isKeyMapNotNull(contrato.toMap(), requeredItens())) {
         throw NullException();
       }
 
@@ -56,14 +58,12 @@ class DAOContrato implements DAOUtilsI {
       final map = await UtilsGeral.getSelectMapProduto(valorUnitAndPorcLucro);
 
       final valor =
-          (map[0]['valor_unit'] * map[0]['porc_lucro'] + map[0]['valor_unit']) *
-              contrato.qnt_produto;
+          (map[0]['valor_unit'] * map[0]['porc_lucro'] + map[0]['valor_unit']);
 
       return await Cursor.execute(sprintf(SQLContrato.CREATE, [
         contrato.id_cliente.toString(),
         contrato.id_produto.toString(),
         contrato.num_parcelas.toString(),
-        contrato.qnt_produto.toString(),
         valor.toString(),
         contrato.descricao
       ]));
@@ -75,7 +75,7 @@ class DAOContrato implements DAOUtilsI {
       rethrow;
     } on ClientException {
       rethrow;
-    }on ParcelaDefinidaException{
+    } on ParcelaDefinidaException {
       rethrow;
     } catch (e) {
       print("Erro $e ao salvar, tente novamente!");

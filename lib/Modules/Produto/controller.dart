@@ -46,7 +46,8 @@ class ProdutoControllerHandler implements ServerUtils {
             body: "Opa, Já existe um produto com o mesmo nome!");
       } on NullException {
         return Response.badRequest(
-            body: ResponseUtils.requeredItensMessage(DAOProduto().requeredItens(), map));
+            body: ResponseUtils.requeredItensMessage(
+                DAOProduto().requeredItens(), map));
       } on IDException {
         return Response.badRequest(
             body: "O ID é adicionado automaticamente, por isso "
@@ -65,6 +66,10 @@ class ProdutoControllerHandler implements ServerUtils {
                 id)
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
+      } on PgException {
+        return Response.badRequest(
+          body: "Já existe um produto com o mesmo nome da sua alteração na base!"
+        );
       } on IDException {
         return Response.badRequest(
             body:

@@ -25,7 +25,15 @@ class DAOCliente implements DAOUtilsI {
 
   /// Clientes por cpf
   Future<List<Map<String, dynamic>>> getByCPF(String cpf) =>
-      UtilsGeral.getSelectMapCliente(sprintf(SQLCliente.SELECT_BY_CPF, [cpf]));
+      UtilsGeral.getSelectMapCliente(sprintf(SQLCliente.SELECT_BY_CPF,
+       [UtilsGeral.addSides("%", cpf)]));
+
+  /// Cliente por nome
+  Future<List<Map<String, dynamic>>> getByName(String name) {
+    final nameReplace = name.replaceAll("%20", " ");
+    return UtilsGeral.getSelectMapCliente(
+        sprintf(SQLCliente.SELECT_BY_NOME, [UtilsGeral.addSides("%", nameReplace)]));
+  }
 
   @override
   List<String> requeredItens() => SQLCliente.requeredItens;
@@ -34,7 +42,7 @@ class DAOCliente implements DAOUtilsI {
   Future<bool> postCreate(Cliente cliente) async {
     try {
       if (cliente.id != null) throw IDException();
-      if (UtilsGeral.isNotNullKeyMap(cliente.toMap(), requeredItens())) {
+      if (UtilsGeral.isKeyMapNotNull(cliente.toMap(), requeredItens())) {
         throw NullException();
       }
       return await Cursor.execute(sprintf(SQLCliente.CREATE, [

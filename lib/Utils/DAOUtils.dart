@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:sistema_promissorias/Modules/Cliente/model.dart';
 import 'package:sistema_promissorias/Modules/Parcela/model.dart';
 import 'package:sprintf/sprintf.dart';
@@ -99,7 +101,7 @@ abstract class UtilsGeral {
     return getContrato.isEmpty;
   }
 
-  static bool isNotNullKeyMap(
+  static bool isKeyMapNotNull(
       Map<String, dynamic> map, List<String> listRequeredElements) {
     for (String camp in listRequeredElements) {
       if (map[camp] == null) return true;
@@ -107,11 +109,15 @@ abstract class UtilsGeral {
     return false;
   }
 
-  static bool isNullKeyMap(
+  static bool isKeyMapNull(
       Map<String, dynamic> map, List<String> listAutoElements) {
     for (String camp in listAutoElements) {
       if (map[camp] != null) return true;
     }
     return false;
   }
+
+  static String addSides(String addItem, String textBase) => textBase
+      .padLeft(textBase.length + 1, addItem)
+      .padRight(textBase.length + 2, addItem);
 }

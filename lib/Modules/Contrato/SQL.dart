@@ -25,8 +25,6 @@ abstract class SQLContrato {
 
       _VALOR = "valor",
 
-      _QNT_PRODUTO = "qnt_produto",
-
       _DESCRICAO = "descricao",
 
       _DATA_CRIACAO = "data_criacao",
@@ -41,7 +39,6 @@ abstract class SQLContrato {
           "$_ID_PRODUTO INT REFERENCES ${SQLProduto.NAME_TABLE} (${SQLGeral.ID}) NOT NULL,"
           "$_NUM_PARCLS INT NOT NULL, "
           "$_DATA_CRIACAO DATE DEFAULT CURRENT_DATE, "
-          "$_QNT_PRODUTO INT NOT NULL, "
           "$_VALOR NUMERIC NOT NULL,"
           "$_DESCRICAO VARCHAR(200) NOT NULL,"
           "$_PARCELAS_DEFINIDAS BOOL DEFAULT FALSE);",
@@ -66,11 +63,11 @@ abstract class SQLContrato {
 
       CREATE =
           "INSERT INTO $NAME_TABLE ($_ID_CLIENTE, $_ID_PRODUTO, $_NUM_PARCLS, "
-          "$_QNT_PRODUTO, $_VALOR, $_DESCRICAO) VALUES (%s,%s,%s,%s,%s,'%s')",
+          "$_VALOR, $_DESCRICAO) VALUES (%s,%s,%s,%s,'%s')",
 
       DELETE = SQLGeral.deleteSQL(NAME_TABLE);
 
-  static List<String> requeredItens = [_ID_CLIENTE, _ID_PRODUTO, _NUM_PARCLS, _QNT_PRODUTO, _DESCRICAO],
+  static List<String> requeredItens = [_ID_CLIENTE, _ID_PRODUTO, _NUM_PARCLS, _DESCRICAO],
   
   autoItens = [SQLGeral.ID, _DATA_CRIACAO, _VALOR],
 
