@@ -1,5 +1,6 @@
+import 'dart:math';
+
 import 'package:postgres/postgres.dart';
-import 'package:shelf/shelf.dart';
 import 'package:sistema_promissorias/Modules/Cliente/SQL.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
 import 'package:sistema_promissorias/Service/open_cursor.dart';
@@ -25,14 +26,14 @@ class DAOCliente implements DAOUtilsI {
 
   /// Clientes por cpf
   Future<List<Map<String, dynamic>>> getByCPF(String cpf) =>
-      UtilsGeral.getSelectMapCliente(sprintf(SQLCliente.SELECT_BY_CPF,
-       [UtilsGeral.addSides("%", cpf)]));
+      UtilsGeral.getSelectMapCliente(
+          sprintf(SQLCliente.SELECT_BY_CPF, [UtilsGeral.addSides("%", cpf)]));
 
   /// Cliente por nome
   Future<List<Map<String, dynamic>>> getByName(String name) {
     final nameReplace = name.replaceAll("%20", " ");
-    return UtilsGeral.getSelectMapCliente(
-        sprintf(SQLCliente.SELECT_BY_NOME, [UtilsGeral.addSides("%", nameReplace)]));
+    return UtilsGeral.getSelectMapCliente(sprintf(
+        SQLCliente.SELECT_BY_NOME, [UtilsGeral.addSides("%", nameReplace)]));
   }
 
   @override
@@ -42,7 +43,7 @@ class DAOCliente implements DAOUtilsI {
   Future<bool> postCreate(Cliente cliente) async {
     try {
       if (cliente.id != null) throw IDException();
-      if (UtilsGeral.isKeyMapNotNull(cliente.toMap(), requeredItens())) {
+      if (UtilsGeral.isRequeredItensNull(cliente.toMap(), requeredItens())) {
         throw NullException();
       }
       return await Cursor.execute(sprintf(SQLCliente.CREATE, [
@@ -54,9 +55,21 @@ class DAOCliente implements DAOUtilsI {
     } on PgException catch (e) {
       if (e.message
           .contains("duplicar valor da chave viola a restrição de unicidade")) {
-        rethrow;
+        String query =
+            sprintf(SQLCliente.SELECT_COLUMNS_CLIENTE, [cliente.cpf]);
+        final listColAtivo = await Cursor.query(query);
+        if (listColAtivo![0][0] != true &&
+            listColAtivo[0][1] == cliente.nome_completo) {
+          if (await Cursor.execute(
+              sprintf(SQLCliente.ACTIVE_CLIENT, [cliente.cpf]))) {
+            await putUpdate(cliente, listColAtivo[0][2].toString());
+            throw reactiveException();
+          }
+        }
       }
-      return false;
+      rethrow;
+    } on reactiveException {
+      rethrow;
     } on NullException {
       rethrow;
     } on IDException {
@@ -108,10 +121,28 @@ class DAOCliente implements DAOUtilsI {
   Future<bool> delete(String id) async {
     try {
       if (await UtilsGeral.isClientExists(id)) throw ClientException();
+
+      final clientesComContrato =
+          await Cursor.query(SQLCliente.SELECT_ID_CLIENTE_IN_CONTRATO);
+
+      for (List idClienteList in clientesComContrato!) {
+        if (idClienteList[0] == int.parse(id)) {
+          String query =
+              sprintf(SQLCliente.SELECT_ATIVO_CONTRATO_BY_ID_CLIENTE, [id]);
+
+          final isContratoAtivo = await Cursor.query(query);
+
+          for (List ativoList in isContratoAtivo!) {
+            if (ativoList[0]) {
+              throw ForeingKeyException();
+            }
+          }
+        }
+      }
       return await UtilsGeral.executeDelete(SQLCliente.DELETE, id);
-    } on IDException {
+    } on ForeingKeyException {
       rethrow;
-    } on PgException {
+    } on IDException {
       rethrow;
     } on ClientException {
       rethrow;

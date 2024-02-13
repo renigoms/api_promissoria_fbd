@@ -26,8 +26,8 @@ class DAOProduto implements DAOUtilsI {
   /// produtos por nome
   Future<List<Map<String, dynamic>>> getByName(String name) {
     final nameReplace = name.replaceAll("%20", " ");
-    return UtilsGeral.getSelectMapProduto(
-        sprintf(SQLProduto.SELECT_BY_NAME, [UtilsGeral.addSides("%", nameReplace)]));
+    return UtilsGeral.getSelectMapProduto(sprintf(
+        SQLProduto.SELECT_BY_NAME, [UtilsGeral.addSides("%", nameReplace)]));
   }
 
   @override
@@ -37,9 +37,10 @@ class DAOProduto implements DAOUtilsI {
   Future<bool> postCreate(Produto produto) async {
     try {
       if (produto.id != null) throw IDException();
-      if (produto.nome == null ||
-          produto.unid_medida == null ||
-          produto.valor_unit == null) throw NullException();
+      if (UtilsGeral.isRequeredItensNull(
+          produto.toMap(), SQLProduto.requeredItens)) {
+        throw NullException();
+      }
       String query = produto.porc_lucro == null
           ? sprintf(SQLProduto.CREATE_WITH_PORC_LUCRO_DEFAULT, [
               produto.nome,
@@ -56,9 +57,21 @@ class DAOProduto implements DAOUtilsI {
     } on PgException catch (e) {
       if (e.message
           .contains("duplicar valor da chave viola a restrição de unicidade")) {
+        String query =
+            sprintf(SQLProduto.SELECT_COL_ATIVO_PRODUTO, [produto.nome]);
+        final listColAtivo = await Cursor.query(query);
+        if (listColAtivo![0][0] != true) {
+          if (await Cursor.execute(
+              sprintf(SQLProduto.ACTIVE_PRODUTO, [produto.nome]))) {
+            await putUpdate(produto, listColAtivo[0][1].toString());
+            throw reactiveException();
+          }
+        }
         rethrow;
       }
       return false;
+    } on reactiveException {
+      rethrow;
     } on NullException {
       rethrow;
     } on IDException {
@@ -113,10 +126,28 @@ class DAOProduto implements DAOUtilsI {
   Future<bool> deleteProduto(String id) async {
     try {
       if (await UtilsGeral.isProductExists(id)) throw ProductException();
+
+      final produtoComContrato =
+          await Cursor.query(SQLProduto.SELECT_ID_PRODUTO_IN_CONTRATO);
+
+      for (List idProdutoList in produtoComContrato!) {
+        if (idProdutoList[0] == int.parse(id)) {
+          String query =
+              sprintf(SQLProduto.SELECT_ATIVO_CONTRATO_BY_ID_PRODUTO, [id]);
+
+          final isContratoAtivo = await Cursor.query(query);
+
+          for (List ativoList in isContratoAtivo!) {
+            if (ativoList[0]) {
+              throw ForeingKeyException();
+            }
+          }
+        }
+      }
       return await UtilsGeral.executeDelete(SQLProduto.DELETE, id);
     } on IDException {
       rethrow;
-    } on PgException {
+    } on ForeingKeyException {
       rethrow;
     } on ProductException {
       rethrow;

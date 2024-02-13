@@ -16,22 +16,17 @@ class ProdutoControllerHandler implements ServerUtils {
     final route = Router();
 
     /// rota get sem parâmetro
-    route.get(
-        "/",
-        (Request request) async =>
-            ResponseUtils.getResponse(await DAOProduto().getAll()));
+    route.get("/", (Request request) async {
+      String ? search = request.url.queryParameters['search'];
 
-    /// rota get por id
-    route.get(
-        "/<id>",
-        (Request request, String id) async =>
-            ResponseUtils.getResponse(await DAOProduto().getByID(id)));
+      int ? id = search !=null ? int.tryParse(search):null;
 
-    /// rota get por nome
-    route.get(
-        "/nome/<nome>",
-        (Request request, String nome) async =>
-            ResponseUtils.getResponse(await DAOProduto().getByName(nome)));
+      if (search != null && id == null){
+        return ResponseUtils.getResponse(await DAOProduto().getByName(search));
+      }
+      return search == null ? ResponseUtils.getResponse(await DAOProduto().getAll()):
+      ResponseUtils.getResponse(await DAOProduto().getByID(id.toString()));
+    });
 
     // rota post
     route.post("/", (Request request) async {
@@ -44,6 +39,9 @@ class ProdutoControllerHandler implements ServerUtils {
       } on PgException {
         return Response.badRequest(
             body: "Opa, Já existe um produto com o mesmo nome!");
+      }on reactiveException{
+        return Response.ok("Produto inativo ativado. "
+            "Isso ocorreu porque já existia um produto inativo com o mesmo nome na base!");
       } on NullException {
         return Response.badRequest(
             body: ResponseUtils.requeredItensMessage(
@@ -93,7 +91,7 @@ class ProdutoControllerHandler implements ServerUtils {
       } on IDException {
         return Response.badRequest(
             body: "Você precisa fornecer o ID do produto que quer deletar!");
-      } on PgException {
+      } on ForeingKeyException {
         return Response.badRequest(
             body: "Não foi possível excluir o seguinte produto, pois ele faz "
                 "parte de um ou mais contratos ativos!");

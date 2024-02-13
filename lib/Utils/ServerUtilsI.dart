@@ -31,8 +31,9 @@ abstract class ResponseUtils {
   /// Verifica campos obrigatórios não preechidos
   static String requeredItensMessage(
       List<String> listRequered, Map<String, dynamic> jsonRequest) {
-    for (String camp in listRequered) {
-      if (jsonRequest[camp] == null) return "O campo $camp é obrigatório !";
+    List itens = [null, "", 0, 0.0];
+    for (var camp in listRequered) {
+      if (itens.contains(jsonRequest[camp])) return "O campo $camp é obrigatório !";
     }
     return "";
   }

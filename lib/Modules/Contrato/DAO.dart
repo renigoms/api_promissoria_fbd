@@ -1,9 +1,16 @@
+import 'dart:async';
+
+import 'package:intl/intl.dart';
+import 'package:sistema_promissorias/Modules/Cliente/DAO.dart';
 import 'package:sistema_promissorias/Modules/Contrato/SQL.dart';
 import 'package:sistema_promissorias/Modules/Contrato/model.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
 import 'package:sistema_promissorias/Service/open_cursor.dart';
 import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 import 'package:sprintf/sprintf.dart';
+
+import '../../Utils/SQLGeral.dart';
+import '../Parcela/SQL.dart';
 
 class DAOContrato implements DAOUtilsI {
   // Acesso a Query de criacao da tabela
@@ -36,11 +43,11 @@ class DAOContrato implements DAOUtilsI {
   /// método post
   Future<bool> postCreate(Contrato contrato) async {
     try {
-      if (UtilsGeral.isKeyMapNull(contrato.toMap(), autoItens())) {
+      if (UtilsGeral.isAutoItensNotNull(contrato.toMap(), autoItens())) {
         throw AutoValueException();
       }
 
-      if (UtilsGeral.isKeyMapNotNull(contrato.toMap(), requeredItens())) {
+      if (UtilsGeral.isRequeredItensNull(contrato.toMap(), requeredItens())) {
         throw NullException();
       }
 
@@ -57,16 +64,61 @@ class DAOContrato implements DAOUtilsI {
 
       final map = await UtilsGeral.getSelectMapProduto(valorUnitAndPorcLucro);
 
-      final valor =
+      double valorContrato =
           (map[0]['valor_unit'] * map[0]['porc_lucro'] + map[0]['valor_unit']);
 
-      return await Cursor.execute(sprintf(SQLContrato.CREATE, [
+      bool createContrato = await Cursor.execute(sprintf(SQLContrato.CREATE, [
         contrato.id_cliente.toString(),
         contrato.id_produto.toString(),
         contrato.num_parcelas.toString(),
-        valor.toString(),
+        valorContrato.toString(),
         contrato.descricao
       ]));
+
+      if (createContrato) {
+        List<Map<String, dynamic>> client =
+                await DAOCliente().getByID(contrato.id_cliente.toString()),
+            listContrato = await getByClienteCPF(client[0]['cpf']);
+
+        late Map contratoMap;
+
+        for (Map contrato in listContrato) {
+          if (!contrato['parcelas_definidas']) {
+            contratoMap = contrato;
+            break;
+          }
+        }
+
+        int contSucess = 0;
+
+        // data atual com salto de um mês
+        DateTime dateToday = DateTime(
+            DateTime.now().year, DateTime.now().month + 1, DateTime.now().day);
+
+        // calculo do valor de cada parcela
+        double valorParcela = valorContrato / contrato.num_parcelas!;
+
+        // Definição das parcelas de acordo com a quantidade definida no contrato
+        for (int i = 0; i < contrato.num_parcelas!; i++) {
+          if (await Cursor.execute(sprintf(SQLParcela.CREATE, [
+            contratoMap['id'].toString(),
+            valorParcela.toString(),
+            DateFormat("dd-MM-yyyy").format(dateToday)
+          ]))) contSucess++;
+          dateToday =
+              DateTime(dateToday.year, dateToday.month + 1, dateToday.day);
+        }
+
+        // Se tudo deu certo o status de parcelas definidas em contrato fica true
+        return contSucess == contrato.num_parcelas
+            ? await Cursor.execute(sprintf(
+                "UPDATE ${SQLContrato.NAME_TABLE} SET parcelas_definidas = TRUE "
+                "WHERE ${SQLGeral.ID}=%s;",
+                [contratoMap['id'].toString()]))
+            : false;
+      }
+
+      return false;
     } on NullException {
       rethrow;
     } on AutoValueException {
@@ -75,10 +127,9 @@ class DAOContrato implements DAOUtilsI {
       rethrow;
     } on ClientException {
       rethrow;
-    } on ParcelaDefinidaException {
-      rethrow;
-    } catch (e) {
+    } catch (e, s) {
       print("Erro $e ao salvar, tente novamente!");
+      print(s);
       return false;
     }
   }
@@ -103,17 +154,24 @@ class DAOContrato implements DAOUtilsI {
       }
 
       if (await _isFullParcelasPagas(idContrato)) {
-        return await UtilsGeral.executeDelete(SQLContrato.DELETE, idContrato);
+        String query = sprintf(SQLContrato.DESATIVAR_PARCELAS, [idContrato]);
+        if (await Cursor.execute(query)) {
+          return await UtilsGeral.executeDelete(SQLContrato.DELETE, idContrato);
+        }
+        throw ForeingKeyException();
       }
       throw OpenInstallmentsException();
+    } on ForeingKeyException {
+      rethrow;
     } on OpenInstallmentsException {
       rethrow;
     } on IDException {
       rethrow;
     } on ContractException {
       rethrow;
-    } catch (e) {
+    } catch (e, s) {
       print("Erro ao deletar, $e");
+      print(s);
       return false;
     }
   }

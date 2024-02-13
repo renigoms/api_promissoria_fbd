@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:sistema_promissorias/Modules/Cliente/model.dart';
+import 'package:sistema_promissorias/Modules/Parcela/DAO.dart';
 import 'package:sistema_promissorias/Modules/Parcela/model.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -32,7 +33,15 @@ abstract class UtilsGeral {
   /// do tipo SELECT em uma lista de maps
   static Future<List<Map<String, dynamic>>> _getSelectMap(String query) async {
     final dados = await Cursor.query(query);
-    return dados!.map((element) => element.toColumnMap()).toList();
+    final listMap = dados!.map((element) => element.toColumnMap()).toList();
+    for (Map element in List.from(listMap)) {
+      if (element['ativo'] != null) {
+        if (!element['ativo']) {
+          listMap.remove(element);
+        }
+      }
+    }
+    return listMap;
   }
 
   ///ListMap Clinte
@@ -67,8 +76,8 @@ abstract class UtilsGeral {
           Parcela.byMap(map).toMap()
       ];
 
-  // Recebe dois valores, oldValue e newValue, se newValue não for nulo ele
-  // será retornado se não oldValue será retornado
+  /// Recebe dois valores, oldValue e newValue, se newValue não for nulo ele
+  /// será retornado se não oldValue será retornado
   static dynamic getValUpdate(var oldValue, var newValue) =>
       newValue ?? oldValue;
 
@@ -101,15 +110,21 @@ abstract class UtilsGeral {
     return getContrato.isEmpty;
   }
 
-  static bool isKeyMapNotNull(
+  static Future<bool> isParcelaExists(String idContrato, String dataPag) async {
+    final getParcelela = await DAOParcela().getByDataPag(idContrato, dataPag);
+    return getParcelela.isEmpty;
+  }
+
+  static bool isRequeredItensNull(
       Map<String, dynamic> map, List<String> listRequeredElements) {
-    for (String camp in listRequeredElements) {
-      if (map[camp] == null) return true;
+    List itens = [null, "", 0, 0.0];
+    for (var camp in listRequeredElements) {
+      if (itens.contains(map[camp])) return true;
     }
     return false;
   }
 
-  static bool isKeyMapNull(
+  static bool isAutoItensNotNull(
       Map<String, dynamic> map, List<String> listAutoElements) {
     for (String camp in listAutoElements) {
       if (map[camp] != null) return true;

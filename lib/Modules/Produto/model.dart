@@ -7,36 +7,31 @@ class Produto {
   int? _id;
   String? _nome, _unid_medida;
   double? _valor_unit, _porc_lucro;
+  bool ? _ativo;
 
   Produto(
       {int? id,
       required String? nome,
       required String? unid_medida,
       required double? valor_unit,
-      required double? porc_lucro}) {
+      required double? porc_lucro,
+      bool ? ativo}) {
     _id = id;
     _nome = nome;
     _unid_medida = unid_medida;
     _valor_unit = valor_unit;
     _porc_lucro = porc_lucro;
+    _ativo = ativo;
   }
   /// construtor que recebe um map
   factory Produto.byMap(Map map) {
     double? valor_unit, porc_lucro;
-    if (map['valor_unit'] is String) {
-      valor_unit = map['valor_unit'] != null
-          ? double.parse(map['valor_unit'])
-          : map['valor_unit'];
-    } else {
-      valor_unit = map['valor_unit'];
-    }
-    if (map['porc_lucro'] is String) {
-      porc_lucro = map['porc_lucro'] != null
-          ? double.parse(map['porc_lucro'])
-          : map['porc_lucro'];
-    } else {
-      porc_lucro = map['porc_lucro'];
-    }
+
+    valor_unit = map['valor_unit'] is String ?
+    double.parse(map['valor_unit']) : valor_unit = map['valor_unit'];
+
+    porc_lucro = map['porc_lucro'] is String ? double.parse(map['porc_lucro']):
+    porc_lucro = map['porc_lucro'];
 
     return UtilsGeral.isKeysExists(SQLGeral.ID, map)
         ? Produto(
@@ -44,7 +39,8 @@ class Produto {
             nome: map['nome'],
             unid_medida: map['unid_medida'],
             valor_unit: valor_unit,
-            porc_lucro: porc_lucro)
+            porc_lucro: porc_lucro,
+            ativo: map['ativo'])
         : Produto(
             nome: map['nome'],
             unid_medida: map['unid_medida'],
@@ -58,7 +54,8 @@ class Produto {
         "nome": _nome,
         "unid_medida": _unid_medida,
         "valor_unit": _valor_unit,
-        "porc_lucro": _porc_lucro
+        "porc_lucro": _porc_lucro,
+        "ativo": _ativo
       };
 
   get porc_lucro => _porc_lucro;
@@ -70,4 +67,6 @@ class Produto {
   get nome => _nome;
 
   get id => _id;
+
+  get ativo => _ativo;
 }

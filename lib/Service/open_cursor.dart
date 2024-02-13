@@ -4,6 +4,7 @@ import 'package:sistema_promissorias/Modules/Contrato/DAO.dart';
 import 'package:sistema_promissorias/Modules/Parcela/DAO.dart';
 import 'package:sistema_promissorias/Modules/Produto/DAO.dart';
 import 'package:sistema_promissorias/Service/connectDB.dart';
+import 'package:sistema_promissorias/Service/exceptions.dart';
 
 class Cursor {
   static const Map _dataMap = {
@@ -19,7 +20,7 @@ class Cursor {
           await ConnectDataBase.connectionMap(_dataMap).getConnection();
       await cursor!.execute(sqlComand);
       return true;
-    }on PgException{
+    } on PgException {
       rethrow;
     } catch (e) {
       print("Erro ao executa a query solicitada, ${e.toString()}");
@@ -42,10 +43,10 @@ class Cursor {
   /// Cria todas as tabelas do banco caso não existam
   static Future<bool> initTables() async {
     try {
-     return await execute(DAOCliente().createTable())&&
-      await execute(DAOProduto().createTable())&&
-      await execute(DAOContrato().createTable())&&
-      await execute(DAOParcela().createTable());
+      return await execute(DAOCliente().createTable()) &&
+          await execute(DAOProduto().createTable()) &&
+          await execute(DAOContrato().createTable()) &&
+          await execute(DAOParcela().createTable());
     } catch (e) {
       print('Falha ao iniciar tabelas, ${e.toString()}');
       return false;
