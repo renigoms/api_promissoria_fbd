@@ -41,7 +41,8 @@ abstract class SQLContrato {
           "$_DATA_CRIACAO DATE DEFAULT CURRENT_DATE, "
           "$_VALOR NUMERIC NOT NULL,"
           "$_DESCRICAO VARCHAR(200) NOT NULL,"
-          "$_PARCELAS_DEFINIDAS BOOL DEFAULT FALSE);",
+          "$_PARCELAS_DEFINIDAS BOOL DEFAULT FALSE,"
+          "${SQLGeral.ATIVO_QUERY});",
 
       SELECT_ALL = SQLGeral.selectAll(NAME_TABLE),
 
@@ -65,11 +66,16 @@ abstract class SQLContrato {
           "INSERT INTO $NAME_TABLE ($_ID_CLIENTE, $_ID_PRODUTO, $_NUM_PARCLS, "
           "$_VALOR, $_DESCRICAO) VALUES (%s,%s,%s,%s,'%s')",
 
-      DELETE = SQLGeral.deleteSQL(NAME_TABLE);
+      DELETE = SQLGeral.deleteSQL(NAME_TABLE),
+
+      DESATIVAR_PARCELAS = "UPDATE ${SQLParcela.NAME_TABLE} SET ${SQLGeral.ATIVO} = FALSE "
+          "WHERE $_ID_CONTRATO_BY_PARCELA = %s;";
+
+
 
   static List<String> requeredItens = [_ID_CLIENTE, _ID_PRODUTO, _NUM_PARCLS, _DESCRICAO],
   
-  autoItens = [SQLGeral.ID, _DATA_CRIACAO, _VALOR],
+  autoItens = [SQLGeral.ID, _DATA_CRIACAO, _VALOR, SQLGeral.ATIVO],
 
-  idOnly = [_DATA_CRIACAO, _VALOR, _ID_CLIENTE, _ID_PRODUTO, _NUM_PARCLS, _DESCRICAO];
+  idOnly = [_DATA_CRIACAO, _VALOR, _ID_CLIENTE, _ID_PRODUTO, _NUM_PARCLS, _DESCRICAO, SQLGeral.ATIVO];
 }

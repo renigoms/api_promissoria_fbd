@@ -6,17 +6,21 @@ class Cliente {
 
   String? _nome_completo, _cpf, _email, _telefone;
 
+  bool ? _ativo;
+
   Cliente(
       {int? id,
       required String? nome_completo,
       required String? cpf,
       required String? email,
-      required String? telefone}) {
+      required String? telefone,
+      bool? ativo}) {
     _id = id;
     _nome_completo = nome_completo;
     _cpf = cpf;
     _email = email;
     _telefone = telefone;
+    _ativo = ativo;
   }
   /// Construtor que recebe Map
   factory Cliente.byMap(Map map) {
@@ -26,7 +30,8 @@ class Cliente {
             nome_completo: map['nome_completo'],
             cpf: map['cpf'],
             email: map['email'],
-            telefone: map['telefone'])
+            telefone: map['telefone'],
+            ativo: map['ativo'])
         : Cliente(
             nome_completo: map['nome_completo'],
             cpf: map['cpf'],
@@ -40,7 +45,8 @@ class Cliente {
         "nome_completo": _nome_completo,
         "cpf": _cpf,
         "email": _email,
-        "telefone": _telefone
+        "telefone": _telefone,
+        "ativo": _ativo
       };
 
   int? get id => _id;
@@ -48,4 +54,6 @@ class Cliente {
   String? get cpf => _cpf;
   String? get email => _email;
   String? get telefone => _telefone;
+  bool ? get ativo => _ativo;
+
 }

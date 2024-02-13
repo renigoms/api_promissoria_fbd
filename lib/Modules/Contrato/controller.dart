@@ -13,24 +13,21 @@ class ContratoHandlerController implements ServerUtils {
   Router get router {
     final route = Router();
 
-    /// rota get sem parâmetro
-    route.get(
-        "/",
-        (Request request) async =>
-            ResponseUtils.getResponse(await DAOContrato().getAll()));
+    route.get("/", (Request request) async {
+          String ? search = request.url.queryParameters['search'];
 
-    /// rota get por id
-    route.get(
-        "/<id>",
-        (Request request, String id) async =>
-            ResponseUtils.getResponse(await DAOContrato().getByID(id)));
+          int ? id = search !=null ? int.tryParse(search):null;
 
-    /// rota get por cpf
-    route.get(
-        "/cpf_cliente/<cpf>",
-        (Request request, String cpfCliente) async =>
-            ResponseUtils.getResponse(
-                await DAOContrato().getByClienteCPF(cpfCliente)));
+          if (search != null && id == null){
+            if (search.length>=4 && search.contains(".") || search.contains("-")) {
+              return ResponseUtils.getResponse(await DAOContrato().getByClienteCPF(search));
+            }
+          }
+          return search == null ? ResponseUtils.getResponse(await DAOContrato().getAll()):
+          ResponseUtils.getResponse(await DAOContrato().getByID(id.toString()));
+        });
+
+
 
     /// rota post
     route.post("/", (Request request) async {
@@ -66,12 +63,16 @@ class ContratoHandlerController implements ServerUtils {
     });
 
     /// rota delete
-    route.delete("/<id>", (Request request, String id) async {
+    route.
+    delete("/<id>", (Request request, String id) async {
       try {
         return await DAOContrato().delete(id)
             ? Response.ok("Contrato e parcelas deletadas")
             : Response.internalServerError(
                 body: "Erro durante a tentativa de delete");
+      }on ForeingKeyException{
+        return Response.badRequest(
+            body: "Algumas parcelas ainda estão ativas nesse contrato!");
       } on IDException {
         return Response.badRequest(
             body: "Você precisa fornecer o ID do produto que quer deletar!");

@@ -11,7 +11,7 @@ class Contrato {
 
   String? _descricao, _data_criacao;
 
-  bool? _parcelas_definidas;
+  bool? _parcelas_definidas, _ativo;
 
   Contrato(
       {int? id,
@@ -21,7 +21,8 @@ class Contrato {
       required double? valor,
       required String? descricao,
       String? data_criacao,
-      bool? parcelas_definidas}) {
+      bool? parcelas_definidas,
+      bool? ativo}) {
     _id = id;
     _id_cliente = id_cliente;
     _id_produto = id_produto;
@@ -30,7 +31,9 @@ class Contrato {
     _descricao = descricao;
     _data_criacao = data_criacao;
     _parcelas_definidas = parcelas_definidas;
+    _ativo = ativo;
   }
+
   /// Construtor que recebe Map
   factory Contrato.byMap(Map map) {
     // verifica se essas chaves existem no map
@@ -46,10 +49,12 @@ class Contrato {
           descricao: map['descricao'],
           data_criacao: map['data_criacao'] != null
               ? DateFormat("dd-MM-yyyy").format(
-              map['data_criacao'].runtimeType == String ? DateTime.parse(
-                  map['data_criacao']):map['data_criacao'])
+                  map['data_criacao'].runtimeType == String
+                      ? DateTime.parse(map['data_criacao'])
+                      : map['data_criacao'])
               : map['data_criacao'],
-          parcelas_definidas: map['parcelas_definidas']);
+          parcelas_definidas: map['parcelas_definidas'],
+          ativo: map['ativo']);
     }
 
     return Contrato(
@@ -59,6 +64,7 @@ class Contrato {
         valor: map['valor'] != null ? double.parse(map['valor']) : map['valor'],
         descricao: map['descricao']);
   }
+
   /// Extração de objeto contrato em formato Map
   Map<String, dynamic> toMap() => {
         "id": _id,
@@ -68,22 +74,25 @@ class Contrato {
         "valor": _valor,
         "descricao": _descricao,
         "data_criacao": _data_criacao,
-        "parcelas_definidas": _parcelas_definidas
+        "parcelas_definidas": _parcelas_definidas,
+        "ativo": _ativo
       };
 
-  get parcelas_definidas => _parcelas_definidas;
+  bool ? get parcelas_definidas => _parcelas_definidas;
 
-  get data_criacao => _data_criacao;
+  String ? get data_criacao => _data_criacao;
 
-  get descricao => _descricao;
+  String ? get descricao => _descricao;
 
-  get valor => _valor;
+  double ? get valor => _valor;
 
-  get num_parcelas => _num_parcelas;
+  int ? get num_parcelas => _num_parcelas;
 
-  get id_produto => _id_produto;
+  int ? get id_produto => _id_produto;
 
-  get id_cliente => _id_cliente;
+  int ? get id_cliente => _id_cliente;
 
-  get id => _id;
+  int ? get id => _id;
+
+  bool ? get ativo => _ativo;
 }
