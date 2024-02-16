@@ -19,8 +19,9 @@ abstract class SQLGeral {
 
   static String selectAll(String nameTable) => "SELECT * FROM $nameTable";
 
-  static String selectColAtivo(String table, String buscBy) => "SELECT ${SQLGeral.ATIVO} FROM $table "
-      "WHERE $buscBy ILIKE '%s';";
+  static String selectColAtivo(String table, String buscBy) =>
+      "SELECT ${SQLGeral.ATIVO} FROM $table WHERE $buscBy ILIKE '%s';";
 
-  static String ativar(String table, String by) =>  "UPDATE $table SET $ATIVO = TRUE WHERE $by ILIKE '%s';";
+  static String ativar(String table, String by) =>
+      "UPDATE $table SET $ATIVO = TRUE WHERE $by ILIKE '%s';";
 }
