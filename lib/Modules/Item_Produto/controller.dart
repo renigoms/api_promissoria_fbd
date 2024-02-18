@@ -2,7 +2,7 @@
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_router/src/router.dart';
-import 'package:sistema_promissorias/Modules/Item_Contrato/DAO.dart';
+import 'package:sistema_promissorias/Modules/Item_Produto/DAO.dart';
 import 'package:sistema_promissorias/Utils/ServerUtilsI.dart';
 
 class ItemProdutoController implements ServerUtils{

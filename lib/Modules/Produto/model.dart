@@ -58,15 +58,17 @@ class Produto {
         "ativo": _ativo
       };
 
-  get porc_lucro => _porc_lucro;
 
-  get valor_unit => _valor_unit;
 
-  get unid_medida => _unid_medida;
+  double ? get porc_lucro => _porc_lucro;
 
-  get nome => _nome;
+  double ? get valor_unit => _valor_unit;
 
-  get id => _id;
+  String ? get unid_medida => _unid_medida;
 
-  get ativo => _ativo;
+  String ? get nome => _nome;
+
+  int ? get id => _id;
+
+  bool ? get ativo => _ativo;
 }

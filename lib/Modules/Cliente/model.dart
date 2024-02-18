@@ -41,7 +41,7 @@ class Cliente {
 
   /// Extração de objeto cliente em formato Map
   Map<String, dynamic> toMap() => {
-        "id": _id,
+  "id": _id,
         "nome_completo": _nome_completo,
         "cpf": _cpf,
         "email": _email,

@@ -9,7 +9,6 @@ import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 abstract class SQLContrato {
   static final String NAME_TABLE = "Contrato",
       _ID_CLIENTE = "id_cliente",
-      _ID_PRODUTO = "id_produto",
       _VALOR_UNIT_BY_PRODUTO = "produto.valor_unit",
       _PORC_LUCRO_BY_PRODUTO = "produto.porc_lucro",
       _STATUS_BY_PACELA = "parcela.status",
@@ -50,8 +49,14 @@ abstract class SQLContrato {
   static final List<String> requeredItens = [
         _ID_CLIENTE,
         _NUM_PARCLS,
-        _DESCRICAO
+        _DESCRICAO,
+        _ITENS_PRODUTO
       ],
 
-      autoItens = [SQLGeral.ID, _DATA_CRIACAO, _VALOR, SQLGeral.ATIVO];
+      autoItens = [
+        SQLGeral.ID, 
+        _DATA_CRIACAO, 
+        _VALOR, SQLGeral.ATIVO,
+         _PARCELAS_DEFINIDAS
+     ];
 }

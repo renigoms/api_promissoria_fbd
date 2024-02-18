@@ -1,5 +1,4 @@
 import 'package:sistema_promissorias/Modules/Cliente/model.dart';
-import 'package:sistema_promissorias/Modules/Item_Contrato/model.dart';
 import 'package:sistema_promissorias/Modules/Parcela/DAO.dart';
 import 'package:sistema_promissorias/Modules/Parcela/model.dart';
 import 'package:sprintf/sprintf.dart';
@@ -7,6 +6,7 @@ import 'package:sprintf/sprintf.dart';
 import '../Modules/Cliente/DAO.dart';
 import '../Modules/Contrato/DAO.dart';
 import '../Modules/Contrato/model.dart';
+import '../Modules/Item_Produto/model.dart';
 import '../Modules/Produto/DAO.dart';
 import '../Modules/Produto/model.dart';
 import '../Service/exceptions.dart';
