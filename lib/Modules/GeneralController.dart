@@ -3,9 +3,10 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:sistema_promissorias/Modules/Cliente/controller.dart';
 import 'package:sistema_promissorias/Modules/Contrato/controller.dart';
-import 'package:sistema_promissorias/Modules/Item_Contrato/controller.dart';
 import 'package:sistema_promissorias/Modules/Parcela/controller.dart';
 import 'package:sistema_promissorias/Modules/Produto/controller.dart';
+
+import 'Item_Produto/controller.dart';
 /// Gerenciamento geral de rotas
 class GeneralController {
     Handler get handler{

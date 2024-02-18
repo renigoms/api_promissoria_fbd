@@ -33,13 +33,15 @@ class ContratoHandlerController implements ServerUtils {
     route.post("/", (Request request) async {
       final map = ResponseUtils.dadosReqMap(await request.readAsString());
       try {
-        if (UtilsGeral.isKeysExists("parcela_definida", map)) {
-          throw ParcelaDefinidaException();
+
+        if (UtilsGeral.isAutoItensNotNull(map, DAOContrato().autoItens())) {
+          throw AutoValueException();
         }
 
-        if(!UtilsGeral.isKeysExists("itens_produto", map)){
-          throw ItemProException();
+        if (UtilsGeral.isRequeredItensNull(map, DAOContrato().requeredItens())) {
+            throw NullException();
         }
+
         return await DAOContrato()
                 .postCreate(Contrato.byMap(map))
             ? Response.ok("Contrato gerado com sucesso!")
@@ -56,14 +58,6 @@ class ContratoHandlerController implements ServerUtils {
       } on ClientException {
         return Response.badRequest(
             body: "O cliente selecionado não existe na base!");
-      }on ParcelaDefinidaException{
-        return Response.badRequest(
-          body: "O campo da parcela_definida é estabelecido automaticamente. Portando,"
-              "não é permitido adiciona-lo de forma manual!"
-        );
-      }on ItemProException{
-        return Response.badRequest(
-            body: "O campo itens_produto é obrigatório!");
       } catch (e) {
         return Response.badRequest(body: "Erro ao gerar contrato: $e");
       }

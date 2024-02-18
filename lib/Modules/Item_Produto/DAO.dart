@@ -1,6 +1,8 @@
-import 'package:sistema_promissorias/Modules/Item_Contrato/SQL.dart';
+
 import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 import 'package:sprintf/sprintf.dart';
+
+import 'SQL.dart';
 
 class DAOItemProduto{
 

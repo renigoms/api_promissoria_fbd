@@ -1,11 +1,11 @@
 import 'package:postgres/postgres.dart';
 import 'package:sistema_promissorias/Modules/Cliente/DAO.dart';
 import 'package:sistema_promissorias/Modules/Contrato/DAO.dart';
-import 'package:sistema_promissorias/Modules/Item_Contrato/DAO.dart';
 import 'package:sistema_promissorias/Modules/Parcela/DAO.dart';
 import 'package:sistema_promissorias/Modules/Produto/DAO.dart';
 import 'package:sistema_promissorias/Service/connectDB.dart';
-import 'package:sistema_promissorias/Service/exceptions.dart';
+
+import '../Modules/Item_Produto/DAO.dart';
 
 class Cursor {
   static const Map _dataMap = {

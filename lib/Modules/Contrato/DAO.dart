@@ -4,13 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:sistema_promissorias/Modules/Cliente/DAO.dart';
 import 'package:sistema_promissorias/Modules/Contrato/SQL.dart';
 import 'package:sistema_promissorias/Modules/Contrato/model.dart';
-import 'package:sistema_promissorias/Modules/Item_Contrato/SQL.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
 import 'package:sistema_promissorias/Service/open_cursor.dart';
 import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 import 'package:sprintf/sprintf.dart';
 
 import '../../Utils/SQLGeral.dart';
+import '../Item_Produto/SQL.dart';
 import '../Parcela/SQL.dart';
 
 class DAOContrato implements DAOUtilsI {
@@ -39,63 +39,47 @@ class DAOContrato implements DAOUtilsI {
 
   List<String> autoItens() => SQLContrato.autoItens;
 
-  Future<double> _getValorVendaPoduto({int ? idProduto, double somatorio=0}) async{
-    if (idProduto != null){
-      final map = await UtilsGeral.getSelectMapProduto(
-          sprintf(
-              SQLContrato.SELECT_VAL_PORC_LUCRO_PRODUTO, [idProduto.toString()]
-          ));
+  Future<double> _getValorVendaPoduto({int? idProduto}) async {
+    if (idProduto != null) {
+      final map = await UtilsGeral.getSelectMapProduto(sprintf(
+          SQLContrato.SELECT_VAL_PORC_LUCRO_PRODUTO, [idProduto.toString()]));
 
-      double valorVenda = (
-          map[0]['valor_unit'] * map[0]['porc_lucro'] + map[0]['valor_unit']
-      );
+      double valorVenda =
+          (map[0]['valor_unit'] * map[0]['porc_lucro'] + map[0]['valor_unit']);
 
-      somatorio += valorVenda;
-      return somatorio;
+      return valorVenda;
     }
-    return somatorio;
+    return 0;
   }
 
-  Future<double> _calcValorTotalContrato({required List idsProduto,
-     double somatorio=0,int cont = 0}) async{
-
-    double valorTotalContrato = 0;
-
-    try{
-      valorTotalContrato += await _getValorVendaPoduto(idProduto: idsProduto[cont],
-          somatorio: somatorio);
-    }on RangeError{
-      return valorTotalContrato;
+  Future<double> _calcValorTotalContrato(
+      {required List idsProduto, double somatorio = 0, int cont = 0}) async {
+    try {
+      somatorio += await _getValorVendaPoduto(idProduto: idsProduto[cont]);
+      cont++;
+    } on RangeError {
+      return somatorio;
     }
 
-    return await _calcValorTotalContrato(idsProduto: idsProduto,
-        somatorio: valorTotalContrato, cont: cont++);
+    return await _calcValorTotalContrato(
+        idsProduto: idsProduto, somatorio: somatorio, cont: cont);
   }
 
   /// método post
   Future<bool> postCreate(Contrato contrato) async {
     try {
-      if (UtilsGeral.isAutoItensNotNull(contrato.toMap(), autoItens())) {
-        throw AutoValueException();
-      }
-
-      if (UtilsGeral.isRequeredItensNull(contrato.toMap(), requeredItens())) {
-        throw NullException();
-      }
-
       if (await UtilsGeral.isClientExists(contrato.id_cliente.toString())) {
         throw ClientException();
       }
 
-      for (int idProdut in contrato.itens_produto!){
+      for (int idProdut in contrato.itens_produto!) {
         if (await UtilsGeral.isProductExists(idProdut.toString())) {
           throw ProductException();
         }
       }
 
-      final valorContrato = await _calcValorTotalContrato(
-          idsProduto: contrato.itens_produto!
-      );
+      final valorContrato =
+          await _calcValorTotalContrato(idsProduto: contrato.itens_produto!);
 
       // Criação do contrato
       bool createContrato = await Cursor.execute(sprintf(SQLContrato.CREATE, [
@@ -128,16 +112,14 @@ class DAOContrato implements DAOUtilsI {
          * Criação dos itens produto
          */
 
-        for (int idProduto in contrato.itens_produto!){
+        for (int idProduto in contrato.itens_produto!) {
           double valorVenda = await _getValorVendaPoduto(idProduto: idProduto);
 
-          if (await Cursor.execute(sprintf(SQLItemProduto.CREATE,
-              [
-                contratoMap['id'].toString(),
-                idProduto.toString(),
-                valorVenda.toString()
-              ]))
-          ) contSucessItensProdut ++;
+          if (await Cursor.execute(sprintf(SQLItemProduto.CREATE, [
+            contratoMap['id'].toString(),
+            idProduto.toString(),
+            valorVenda.toString()
+          ]))) contSucessItensProdut++;
         }
 
         /**
@@ -163,20 +145,15 @@ class DAOContrato implements DAOUtilsI {
         }
 
         if (contSucessParcels == contrato.num_parcelas &&
-            contSucessItensProdut == contrato.itens_produto!.length){
-
-          return  await Cursor.execute(sprintf(
+            contSucessItensProdut == contrato.itens_produto!.length) {
+          return await Cursor.execute(sprintf(
               "UPDATE ${SQLContrato.NAME_TABLE} SET parcelas_definidas = TRUE "
-                  "WHERE ${SQLGeral.ID}=%s;",
+              "WHERE ${SQLGeral.ID}=%s;",
               [contratoMap['id'].toString()]));
         }
       }
 
       return false;
-    } on NullException {
-      rethrow;
-    } on AutoValueException {
-      rethrow;
     } on ProductException {
       rethrow;
     } on ClientException {
@@ -208,8 +185,10 @@ class DAOContrato implements DAOUtilsI {
       }
 
       if (await _isFullParcelasPagas(idContrato)) {
-        if (await UtilsGeral.executeDelete(SQLParcela.DESATIVAR_PARCELAS, idContrato) &&
-        await UtilsGeral.executeDelete(SQLItemProduto.DESTATIVA_ITEM_PRODUTO, idContrato)){
+        if (await UtilsGeral.executeDelete(
+                SQLParcela.DESATIVAR_PARCELAS, idContrato) &&
+            await UtilsGeral.executeDelete(
+                SQLItemProduto.DESTATIVA_ITEM_PRODUTO, idContrato)) {
           return await UtilsGeral.executeDelete(SQLContrato.DELETE, idContrato);
         }
         throw ForeingKeyException();
