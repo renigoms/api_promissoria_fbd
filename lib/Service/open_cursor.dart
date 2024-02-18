@@ -1,6 +1,7 @@
 import 'package:postgres/postgres.dart';
 import 'package:sistema_promissorias/Modules/Cliente/DAO.dart';
 import 'package:sistema_promissorias/Modules/Contrato/DAO.dart';
+import 'package:sistema_promissorias/Modules/Item_Contrato/DAO.dart';
 import 'package:sistema_promissorias/Modules/Parcela/DAO.dart';
 import 'package:sistema_promissorias/Modules/Produto/DAO.dart';
 import 'package:sistema_promissorias/Service/connectDB.dart';
@@ -46,7 +47,8 @@ class Cursor {
       return await execute(DAOCliente().createTable()) &&
           await execute(DAOProduto().createTable()) &&
           await execute(DAOContrato().createTable()) &&
-          await execute(DAOParcela().createTable());
+          await execute(DAOParcela().createTable()) &&
+          await execute(DAOItemProduto().createTable());
     } catch (e) {
       print('Falha ao iniciar tabelas, ${e.toString()}');
       return false;

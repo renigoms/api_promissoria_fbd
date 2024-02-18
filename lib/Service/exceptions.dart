@@ -20,4 +20,6 @@ class ParcelaDefinidaException implements Exception {}
 
 class ForeingKeyException implements Exception{}
 
-class reactiveException implements Exception{}
+class ReactiveException implements Exception{}
+
+class ItemProException implements Exception{}

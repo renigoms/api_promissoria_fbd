@@ -54,7 +54,7 @@ class ClienteHandlerController implements ServerUtils {
          return Response.badRequest(
             body: "Erro inesperado na query => $e");
         
-      }on reactiveException{
+      }on ReactiveException{
         return Response.ok("Cliente inativo ativado. "
             "Isso ocorreu porque já existia um cliente inativo com esse cpf na base!");
       } on NullException {

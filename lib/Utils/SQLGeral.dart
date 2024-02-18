@@ -14,8 +14,8 @@ abstract class SQLGeral {
 
       ATIVO_QUERY = "$ATIVO BOOL DEFAULT TRUE";
 
-  static String deleteSQL(String nameTable) =>
-      "UPDATE $nameTable SET $ATIVO = FALSE WHERE $ID = %s;";
+  static String deleteSQL(String nameTable, String columnFilter) =>
+      "UPDATE $nameTable SET $ATIVO = FALSE WHERE $columnFilter = %s;";
 
   static String selectAll(String nameTable) => "SELECT * FROM $nameTable";
 
@@ -24,4 +24,5 @@ abstract class SQLGeral {
 
   static String ativar(String table, String by) =>
       "UPDATE $table SET $ATIVO = TRUE WHERE $by ILIKE '%s';";
+
 }

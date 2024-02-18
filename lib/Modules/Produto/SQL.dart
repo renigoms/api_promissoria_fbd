@@ -6,7 +6,7 @@ import '../Contrato/SQL.dart';
 
 /// Todas as Querys usadas em produto
 abstract class SQLProduto {
-  static String NAME_TABLE = "Produto",
+  static final String NAME_TABLE = "Produto",
       _NAME = "nome",
       _UNID_MEDIDA = "unid_medida",
       _VALOR_UNIT = "valor_unit",
@@ -46,9 +46,9 @@ abstract class SQLProduto {
       UPDATE = """UPDATE $NAME_TABLE SET $_NAME = '%s', $_UNID_MEDIDA = '%s', 
           $_VALOR_UNIT = %s, $_PORCENT_LUCRO = %s WHERE ${SQLGeral.ID} = %s;""",
 
-      DELETE = SQLGeral.deleteSQL(NAME_TABLE),
+      DELETE = SQLGeral.deleteSQL(NAME_TABLE, SQLGeral.ID),
 
       ACTIVE_PRODUTO = SQLGeral.ativar(NAME_TABLE, _NAME);
 
-  static List<String> requeredItens = [_NAME, _UNID_MEDIDA, _VALOR_UNIT];
+  static final List<String> requeredItens = [_NAME, _UNID_MEDIDA, _VALOR_UNIT];
 }

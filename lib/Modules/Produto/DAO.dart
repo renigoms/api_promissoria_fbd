@@ -64,13 +64,13 @@ class DAOProduto implements DAOUtilsI {
           if (await Cursor.execute(
               sprintf(SQLProduto.ACTIVE_PRODUTO, [produto.nome]))) {
             await putUpdate(produto, listColAtivo[0][1].toString());
-            throw reactiveException();
+            throw ReactiveException();
           }
         }
         rethrow;
       }
       return false;
-    } on reactiveException {
+    } on ReactiveException {
       rethrow;
     } on NullException {
       rethrow;

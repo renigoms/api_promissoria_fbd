@@ -36,6 +36,10 @@ class ContratoHandlerController implements ServerUtils {
         if (UtilsGeral.isKeysExists("parcela_definida", map)) {
           throw ParcelaDefinidaException();
         }
+
+        if(!UtilsGeral.isKeysExists("itens_produto", map)){
+          throw ItemProException();
+        }
         return await DAOContrato()
                 .postCreate(Contrato.byMap(map))
             ? Response.ok("Contrato gerado com sucesso!")
@@ -57,6 +61,9 @@ class ContratoHandlerController implements ServerUtils {
           body: "O campo da parcela_definida é estabelecido automaticamente. Portando,"
               "não é permitido adiciona-lo de forma manual!"
         );
+      }on ItemProException{
+        return Response.badRequest(
+            body: "O campo itens_produto é obrigatório!");
       } catch (e) {
         return Response.badRequest(body: "Erro ao gerar contrato: $e");
       }
@@ -82,7 +89,7 @@ class ContratoHandlerController implements ServerUtils {
       } on ContractException {
         return Response.badRequest(
             body: "O contrato selecionado não existe na base!");
-      } catch (e) {
+      }catch (e) {
         return Response.badRequest(body: "Erro ao deletar: $e");
       }
     });
