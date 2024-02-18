@@ -63,12 +63,12 @@ class DAOCliente implements DAOUtilsI {
           if (await Cursor.execute(
               sprintf(SQLCliente.ACTIVE_CLIENT, [cliente.cpf]))) {
             await putUpdate(cliente, listColAtivo[0][2].toString());
-            throw reactiveException();
+            throw ReactiveException();
           }
         }
       }
       rethrow;
-    } on reactiveException {
+    } on ReactiveException {
       rethrow;
     } on NullException {
       rethrow;

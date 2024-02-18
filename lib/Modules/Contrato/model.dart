@@ -5,7 +5,9 @@ import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 
 class Contrato {
-  int? _id, _id_cliente, _id_produto, _num_parcelas;
+  int? _id, _id_cliente, _num_parcelas;
+
+  List ? _itens_produto;
 
   double? _valor;
 
@@ -16,7 +18,7 @@ class Contrato {
   Contrato(
       {int? id,
       required int? id_cliente,
-      required int? id_produto,
+      List ? itens_produto,
       required int? num_parcelas,
       required double? valor,
       required String? descricao,
@@ -25,7 +27,7 @@ class Contrato {
       bool? ativo}) {
     _id = id;
     _id_cliente = id_cliente;
-    _id_produto = id_produto;
+    _itens_produto = itens_produto;
     _num_parcelas = num_parcelas;
     _valor = valor;
     _descricao = descricao;
@@ -42,7 +44,6 @@ class Contrato {
       return Contrato(
           id: map['id'],
           id_cliente: map['id_cliente'],
-          id_produto: map['id_produto'],
           num_parcelas: map['num_parcelas'],
           valor:
               map['valor'] != null ? double.parse(map['valor']) : map['valor'],
@@ -59,7 +60,7 @@ class Contrato {
 
     return Contrato(
         id_cliente: map['id_cliente'],
-        id_produto: map['id_produto'],
+        itens_produto : map['itens_produto'],
         num_parcelas: map['num_parcelas'],
         valor: map['valor'] != null ? double.parse(map['valor']) : map['valor'],
         descricao: map['descricao']);
@@ -69,7 +70,6 @@ class Contrato {
   Map<String, dynamic> toMap() => {
         "id": _id,
         "id_cliente": _id_cliente,
-        "id_produto": _id_produto,
         "num_parcelas": _num_parcelas,
         "valor": _valor,
         "descricao": _descricao,
@@ -88,7 +88,7 @@ class Contrato {
 
   int ? get num_parcelas => _num_parcelas;
 
-  int ? get id_produto => _id_produto;
+  List ? get itens_produto => _itens_produto;
 
   int ? get id_cliente => _id_cliente;
 

@@ -1,6 +1,5 @@
-import 'dart:ffi';
-
 import 'package:sistema_promissorias/Modules/Cliente/model.dart';
+import 'package:sistema_promissorias/Modules/Item_Contrato/model.dart';
 import 'package:sistema_promissorias/Modules/Parcela/DAO.dart';
 import 'package:sistema_promissorias/Modules/Parcela/model.dart';
 import 'package:sprintf/sprintf.dart';
@@ -76,6 +75,12 @@ abstract class UtilsGeral {
           Parcela.byMap(map).toMap()
       ];
 
+  /// ListMap ItemProduto
+  static Future<List<Map<String, dynamic>>> getSelectMapItemProduto(String query) async =>
+    [
+      for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query))
+        ItemProduto.byMap(map).toMap()
+    ];
   /// Recebe dois valores, oldValue e newValue, se newValue não for nulo ele
   /// será retornado se não oldValue será retornado
   static dynamic getValUpdate(var oldValue, var newValue) =>
@@ -132,6 +137,7 @@ abstract class UtilsGeral {
     return false;
   }
 
+  /// Adiciona % dos lados de %s
   static String addSides(String addItem, String textBase) => textBase
       .padLeft(textBase.length + 1, addItem)
       .padRight(textBase.length + 2, addItem);

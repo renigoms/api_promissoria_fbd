@@ -35,13 +35,13 @@ abstract class ResponseUtils {
     for (var camp in listRequered) {
       if (itens.contains(jsonRequest[camp])) return "O campo $camp é obrigatório !";
     }
-    return "";
+    return "Campo diferente dos aceitos pelo sistema detectado!";
   }
   static String autoItensMessage(
       List<String> listRequered, Map<String, dynamic> jsonRequest) {
     for (String camp in listRequered) {
       if (jsonRequest[camp] != null) return "O campo $camp é definido automaticamente. Sua adição manual não é permitida !";
     }
-    return "";
+    return "Campo diferente dos aceitos pelo sistema detectado!";
   }
 }

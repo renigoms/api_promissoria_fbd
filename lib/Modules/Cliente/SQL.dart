@@ -5,7 +5,7 @@ import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 
 /// Todos os SQL Querys usados no cliete
 abstract class SQLCliente {
-  static String NAME_TABLE = "Cliente",
+  static final String NAME_TABLE = "Cliente",
 
       _NOME_COMPLETO = "nome_completo",
 
@@ -50,9 +50,9 @@ abstract class SQLCliente {
                   $_CPF = '%s',  $_EMAIL = '%s', $_TELEFONE = '%s' 
                   WHERE ${SQLGeral.ID} = %s""",
 
-      DELETE = SQLGeral.deleteSQL(NAME_TABLE),
+      DELETE = SQLGeral.deleteSQL(NAME_TABLE, SQLGeral.ID),
 
       ACTIVE_CLIENT = SQLGeral.ativar(NAME_TABLE, _CPF);
 
-  static List<String> requeredItens = [_NOME_COMPLETO, _CPF, _EMAIL, _TELEFONE];
+  static final List<String> requeredItens = [_NOME_COMPLETO, _CPF, _EMAIL, _TELEFONE];
 }

@@ -5,7 +5,7 @@ import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 
 /// Todas as Querys usadas em Parcela
 abstract class SQLParcela {
-  static String NAME_TABLE = "Parcela",
+  static final String NAME_TABLE = "Parcela",
 
       _STATUS = "status",
 
@@ -47,7 +47,9 @@ abstract class SQLParcela {
           "VALUES (%s,%s,'%s')",
 
       UPDATE = """UPDATE $NAME_TABLE SET $_STATUS = '%s' 
-      WHERE $_ID_CONTRATO = %s AND $_DATA_PAG = '%s';""";
+      WHERE $_ID_CONTRATO = %s AND $_DATA_PAG = '%s';""",
+
+      DESATIVAR_PARCELAS = SQLGeral.deleteSQL(NAME_TABLE, _ID_CONTRATO);
 
   static List<String> autoItens = [SQLGeral.ID, _ID_CONTRATO, _VALOR, _DATA_PAG, SQLGeral.ATIVO];
 }
