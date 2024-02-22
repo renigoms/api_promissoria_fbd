@@ -1,4 +1,5 @@
 import 'package:postgres/postgres.dart';
+import 'package:sistema_promissorias/Modules/Item_Produto/SQL.dart';
 import 'package:sistema_promissorias/Modules/Produto/SQL.dart';
 import 'package:sistema_promissorias/Modules/Produto/model.dart';
 import 'package:sistema_promissorias/Service/open_cursor.dart';
@@ -18,16 +19,14 @@ class DAOProduto implements DAOUtilsI {
   Future<List<Map<String, dynamic>>> getAll() =>
       UtilsGeral.getSelectMapProduto(SQLProduto.SELECT_ALL);
 
-  /// produtos por id
-  @override
-  Future<List<Map<String, dynamic>>> getByID(String id) =>
-      UtilsGeral.getSelectMapProduto(sprintf(SQLProduto.SELECT_BY_ID, [id]));
+  /// produtos por search
 
-  /// produtos por nome
-  Future<List<Map<String, dynamic>>> getByName(String name) {
-    final nameReplace = name.replaceAll("%20", " ");
+  @override
+  Future<List<Map<String, dynamic>>> getBySearch(String search) {
+    int isNumID = int.tryParse(search) ?? 0;
+
     return UtilsGeral.getSelectMapProduto(sprintf(
-        SQLProduto.SELECT_BY_NAME, [UtilsGeral.addSides("%", nameReplace)]));
+        SQLProduto.SELECT_SEARCH, [isNumID, UtilsGeral.addSides("%", search)]));
   }
 
   @override
@@ -55,6 +54,7 @@ class DAOProduto implements DAOUtilsI {
             ]);
       return await Cursor.execute(query);
     } on PgException catch (e) {
+      // Reativando produto já existente na base
       if (e.message
           .contains("duplicar valor da chave viola a restrição de unicidade")) {
         String query =
@@ -88,9 +88,9 @@ class DAOProduto implements DAOUtilsI {
       // ignore: unnecessary_null_comparison
       if (id == null || id.isEmpty) throw IDException();
 
-      if (await UtilsGeral.isProductExists(id)) throw ProductException();
+      if (await UtilsGeral.isNotProductExists(id)) throw ProductException();
 
-      List oldProduto = await getByID(id);
+      List oldProduto = await getBySearch(id);
 
       if (produto.id != null) throw NoAlterException();
 
@@ -125,15 +125,15 @@ class DAOProduto implements DAOUtilsI {
   /// Método de delete
   Future<bool> deleteProduto(String id) async {
     try {
-      if (await UtilsGeral.isProductExists(id)) throw ProductException();
+      if (await UtilsGeral.isNotProductExists(id)) throw ProductException();
 
       final produtoComContrato =
-          await Cursor.query(SQLProduto.SELECT_ID_PRODUTO_IN_CONTRATO);
+          await Cursor.query(SQLItemProduto.SELECT_ID_PRODUTO_IN_ITEM_PRODUTO);
 
       for (List idProdutoList in produtoComContrato!) {
         if (idProdutoList[0] == int.parse(id)) {
-          String query =
-              sprintf(SQLProduto.SELECT_ATIVO_CONTRATO_BY_ID_PRODUTO, [id]);
+          String query = sprintf(
+              SQLItemProduto.SELECT_ATIVO_ITEM_PRODUTO_BY_ID_PRODUTO, [id]);
 
           final isContratoAtivo = await Cursor.query(query);
 

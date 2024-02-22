@@ -15,7 +15,7 @@ import '../Service/open_cursor.dart';
 abstract interface class DAOUtilsI {
   String createTable();
   Future<List<Map<String, dynamic>>> getAll();
-  Future<List<Map<String, dynamic>>> getByID(String id);
+  Future<List<Map<String, dynamic>>> getBySearch(String search);
   List<String> requeredItens();
 }
 
@@ -76,11 +76,13 @@ abstract class UtilsGeral {
       ];
 
   /// ListMap ItemProduto
-  static Future<List<Map<String, dynamic>>> getSelectMapItemProduto(String query) async =>
-    [
-      for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query))
-        ItemProduto.byMap(map).toMap()
-    ];
+  static Future<List<Map<String, dynamic>>> getSelectMapItemProduto(
+          String query) async =>
+      [
+        for (Map<String, dynamic> map in await UtilsGeral._getSelectMap(query))
+          ItemProduto.byMap(map).toMap()
+      ];
+
   /// Recebe dois valores, oldValue e newValue, se newValue não for nulo ele
   /// será retornado se não oldValue será retornado
   static dynamic getValUpdate(var oldValue, var newValue) =>
@@ -99,23 +101,23 @@ abstract class UtilsGeral {
     }
   }
 
-  static Future<bool> isProductExists(String idProduct) async {
-    final getProduct = await DAOProduto().getByID(idProduct);
+  static Future<bool> isNotProductExists(String idProduct) async {
+    final getProduct = await DAOProduto().getBySearch(idProduct);
     return getProduct.isEmpty;
   }
 
-  static Future<bool> isClientExists(String idClient) async {
-    final getClient = await DAOCliente().getByID(idClient);
+  static Future<bool> isNotClientExists(String idClient) async {
+    final getClient = await DAOCliente().getBySearch(idClient);
     return getClient.isEmpty;
   }
 
   ///Verifica se o contrato existe na base
-  static Future<bool> isContractExists(String idContrato) async {
-    final getContrato = await DAOContrato().getByID(idContrato);
+  static Future<bool> isNotContractExists(String idContrato) async {
+    final getContrato = await DAOContrato().getBySearch(idContrato);
     return getContrato.isEmpty;
   }
 
-  static Future<bool> isParcelaExists(String idContrato, String dataPag) async {
+  static Future<bool> isNotParcelaExists(String idContrato, String dataPag) async {
     final getParcelela = await DAOParcela().getByDataPag(idContrato, dataPag);
     return getParcelela.isEmpty;
   }

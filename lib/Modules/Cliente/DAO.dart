@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:postgres/postgres.dart';
 import 'package:sistema_promissorias/Modules/Cliente/SQL.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
@@ -9,29 +11,25 @@ import 'model.dart';
 
 class DAOCliente implements DAOUtilsI {
   // Acesso a Query de criacao da tabela
+
   @override
   String createTable() => SQLCliente.CREATE_TABLE;
   // Métodos GET:
   /// Todos os clientes
+
   @override
-  Future<List<Map<String, dynamic>>> getAll() =>
+  Future<List<Map<String, dynamic>>> getAll() async =>
       UtilsGeral.getSelectMapCliente(SQLCliente.SELECT_ALL);
 
-  /// Clientes por id
+  /// Cliente por search
   @override
-  Future<List<Map<String, dynamic>>> getByID(String id) =>
-      UtilsGeral.getSelectMapCliente(sprintf(SQLCliente.SELECT_BY_ID, [id]));
-
-  /// Clientes por cpf
-  Future<List<Map<String, dynamic>>> getByCPF(String cpf) =>
-      UtilsGeral.getSelectMapCliente(
-          sprintf(SQLCliente.SELECT_BY_CPF, [UtilsGeral.addSides("%", cpf)]));
-
-  /// Cliente por nome
-  Future<List<Map<String, dynamic>>> getByName(String name) {
-    final nameReplace = name.replaceAll("%20", " ");
-    return UtilsGeral.getSelectMapCliente(sprintf(
-        SQLCliente.SELECT_BY_NOME, [UtilsGeral.addSides("%", nameReplace)]));
+  Future<List<Map<String, dynamic>>> getBySearch(String search) {
+    int id = int.tryParse(search) ?? 0;
+    return UtilsGeral.getSelectMapCliente(sprintf(SQLCliente.SELECT_SEARCH, [
+      id,
+      UtilsGeral.addSides("%", search),
+      UtilsGeral.addSides("%", search)
+    ]));
   }
 
   @override
@@ -87,9 +85,9 @@ class DAOCliente implements DAOUtilsI {
 
       if (cliente.id != null) return throw NoAlterException();
 
-      if (await UtilsGeral.isClientExists(id)) throw ClientException();
+      if (await UtilsGeral.isNotClientExists(id)) throw ClientException();
 
-      List oldCliente = await getByID(id);
+      List oldCliente = await getBySearch(id);
 
       String nomeCompleto = UtilsGeral.getValUpdate(
               oldCliente[0]['nome_completo'], cliente.nome_completo),
@@ -118,7 +116,7 @@ class DAOCliente implements DAOUtilsI {
   /// Deleta um cliente por id
   Future<bool> delete(String id) async {
     try {
-      if (await UtilsGeral.isClientExists(id)) throw ClientException();
+      if (await UtilsGeral.isNotClientExists(id)) throw ClientException();
 
       final clientesComContrato =
           await Cursor.query(SQLCliente.SELECT_ID_CLIENTE_IN_CONTRATO);

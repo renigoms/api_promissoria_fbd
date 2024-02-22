@@ -12,25 +12,27 @@ class DAOParcela {
   // Acesso a Query que cria a tabela
   String createTable() => SQLParcela.CREATE_TABLE;
 
-  // Métodos GET:
+  // Método GET:
+
   /// Parcelas por id do contrato
-  Future<List<Map<String, dynamic>>> getByIdContrato(String id_contrato) =>
+  Future<List<Map<String, dynamic>>> getByIdContrato(String idContrato) =>
       UtilsGeral.getSelectMapPacela(
-          sprintf(SQLParcela.SELECT_BY_ID_CONTRATO, [id_contrato]));
+          sprintf(SQLParcela.SELECT_BY_ID_CONTRATO, [idContrato]));
 
   Future<List<Map<String, dynamic>>> getByDataPag(
           String idContrato, String dataPag) =>
       UtilsGeral.getSelectMapPacela(sprintf(
-          SQLParcela.SELECT_BYCONTRATO_AND__DATA_PAG, [idContrato, dataPag]));
+          SQLParcela.SELECT_BY_ID_CONTRATO_AND__DATA_PAG,
+          [idContrato, dataPag]));
 
   static List<String> autoItens() => SQLParcela.autoItens;
 
   /// verifica a inexistência de atributos nulos em parcela exeto status
-  bool _isStatusOnly(Parcela parcela) =>
+  bool _isPagaOnly(Parcela parcela) =>
       UtilsGeral.isAutoItensNotNull(parcela.toMap(), autoItens()) ||
-      parcela.status == null;
+      parcela.paga == null;
 
-  /// Apenas o status pode ser alterado na parcela
+  /// Apenas paga pode ser alterado na parcela
   Future<bool> putUpdate(
       Parcela parcela, String idContrato, String dataPag) async {
     try {
@@ -40,23 +42,23 @@ class DAOParcela {
           dataPag.isEmpty) {
         throw IDException();
       }
-      if (_isStatusOnly(parcela)) throw NoAlterException();
+      if (_isPagaOnly(parcela)) throw NoAlterException();
 
-      if (await UtilsGeral.isContractExists(idContrato)) {
+      if (await UtilsGeral.isNotContractExists(idContrato)) {
         throw ContractException();
       }
 
-      if (await UtilsGeral.isParcelaExists(idContrato, dataPag)) {
+      if (await UtilsGeral.isNotParcelaExists(idContrato, dataPag)) {
         throw ParcelaException();
       }
 
       final oldParcela = await getByDataPag(idContrato, dataPag);
 
-      String status =
-          UtilsGeral.getValUpdate(oldParcela[0]['status'], parcela.status);
+      bool paga =
+          UtilsGeral.getValUpdate(oldParcela[0]['paga'], parcela.paga);
 
       return await Cursor.execute(
-          sprintf(SQLParcela.UPDATE, [status, idContrato, dataPag]));
+          sprintf(SQLParcela.UPDATE, [paga, idContrato, dataPag]));
     } on NoAlterException {
       rethrow;
     } on IDException {

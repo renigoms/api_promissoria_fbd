@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:intl/intl.dart';
 import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 import 'package:sistema_promissorias/Utils/SQLGeral.dart';
@@ -5,21 +7,21 @@ import 'package:sistema_promissorias/Utils/SQLGeral.dart';
 class Parcela {
   int? _id, _id_contrato;
   double? _valor;
-  String? _data_pag, _status;
-  bool? _ativo;
+  String? _data_pag;
+  bool? _ativo, _paga;
 
   Parcela(
       {int? id,
       required int? id_contrato,
       required double? valor,
       required String? data_pag,
-      required String? status,
+      bool? paga,
       bool? ativo}) {
     _id = id;
     _id_contrato = id_contrato;
     _valor = valor;
     _data_pag = data_pag;
-    _status = status;
+    _paga = paga;
     _ativo = ativo;
   }
   /// Construtor que recebe um Map
@@ -34,7 +36,7 @@ class Parcela {
             data_pag: map['data_pag'] != null
                 ? DateFormat("dd-MM-yyyy").format(map['data_pag'])
                 : map['data_pag'],
-            status: map['status'],
+            paga: map['paga'],
             ativo: map['ativo'])
         : Parcela(
             id_contrato: map['id_contrato'],
@@ -42,7 +44,7 @@ class Parcela {
             data_pag: map['data_pag'] != null
                 ? DateFormat("dd-MM-yyyy").format(map['data_pag'])
                 : map['data_pag'],
-            status: map['status']);
+            paga: map['paga']);
   }
 
   /// Extrai a parcela em forma de map
@@ -51,19 +53,19 @@ class Parcela {
         "id_contrato": _id_contrato,
         "valor": _valor,
         "data_pag": _data_pag,
-        "status": _status,
+        "paga": _paga,
         "ativo" : _ativo
       };
 
-  get status => _status;
+  bool ? get paga => _paga;
 
-  get data_pag => _data_pag;
+  String ? get data_pag => _data_pag;
 
-  get valor => _valor;
+  double ? get valor => _valor;
 
-  get id_contrato  => _id_contrato;
+  int ? get id_contrato  => _id_contrato;
 
-  get id => _id;
+  int ? get id => _id;
 
-  get ativo => _ativo;
+  bool ? get ativo => _ativo;
 }
