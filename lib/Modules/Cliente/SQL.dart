@@ -27,11 +27,9 @@ abstract class SQLCliente {
 
       SELECT_ALL = SQLGeral.selectAll(NAME_TABLE),
 
-      SELECT_BY_ID = "$SELECT_ALL WHERE ${SQLGeral.ID} = %s;",
-
-      SELECT_BY_CPF = "$SELECT_ALL WHERE $_CPF ILIKE '%s';",
-
-      SELECT_BY_NOME = "$SELECT_ALL WHERE $_NOME_COMPLETO ILIKE '%s';",
+      SELECT_SEARCH = """$SELECT_ALL WHERE (${SQLGeral.ID} = %s) 
+                          OR ($_CPF ILIKE '%s') 
+                          OR ($_NOME_COMPLETO ILIKE '%s');""",
 
       SELECT_ID_CLIENTE_IN_CONTRATO = """SELECT $_CONTRATO_ID_CLIENTE FROM  
           ${SQLContrato.NAME_TABLE};""",

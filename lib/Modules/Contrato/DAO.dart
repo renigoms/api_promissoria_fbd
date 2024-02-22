@@ -1,4 +1,4 @@
-import 'dart:async';
+// ignore_for_file: file_names
 
 import 'package:intl/intl.dart';
 import 'package:sistema_promissorias/Modules/Cliente/DAO.dart';
@@ -16,22 +16,20 @@ import '../Parcela/SQL.dart';
 class DAOContrato implements DAOUtilsI {
   // Acesso a Query de criacao da tabela
   @override
+  @override
   String createTable() => SQLContrato.CREATE_TABLE;
   // Métodos GET:
   /// Todos os contratos
-  @override
   Future<List<Map<String, dynamic>>> getAll() =>
       UtilsGeral.getSelectMapContrato(SQLContrato.SELECT_ALL);
 
-  /// Contratos por id
+  /// Contratos por search
   @override
-  Future<List<Map<String, dynamic>>> getByID(String id) =>
-      UtilsGeral.getSelectMapContrato(sprintf(SQLContrato.SELECT_BY_ID, [id]));
+  Future<List<Map<String, dynamic>>> getBySearch(String search) {
+    int isIdNum = int.tryParse(search) ?? 0;
 
-  /// contratos pelo cpf do cliente
-  Future<List<Map<String, dynamic>>> getByClienteCPF(String cpf) {
     return UtilsGeral.getSelectMapContrato(
-        sprintf(SQLContrato.SELECT_BY_CPF_CLIENTE, [cpf]));
+        sprintf(SQLContrato.SELECT_BY_SEARCH, [isIdNum, search]));
   }
 
   @override
@@ -68,12 +66,12 @@ class DAOContrato implements DAOUtilsI {
   /// método post
   Future<bool> postCreate(Contrato contrato) async {
     try {
-      if (await UtilsGeral.isClientExists(contrato.id_cliente.toString())) {
+      if (await UtilsGeral.isNotClientExists(contrato.id_cliente.toString())) {
         throw ClientException();
       }
 
       for (int idProdut in contrato.itens_produto!) {
-        if (await UtilsGeral.isProductExists(idProdut.toString())) {
+        if (await UtilsGeral.isNotProductExists(idProdut.toString())) {
           throw ProductException();
         }
       }
@@ -95,8 +93,8 @@ class DAOContrato implements DAOUtilsI {
 
       if (createContrato) {
         List<Map<String, dynamic>> client =
-                await DAOCliente().getByID(contrato.id_cliente.toString()),
-            listContrato = await getByClienteCPF(client[0]['cpf']);
+                await DAOCliente().getBySearch(contrato.id_cliente.toString()),
+            listContrato = await getBySearch(client[0]['cpf']);
 
         late Map contratoMap;
 
@@ -172,7 +170,7 @@ class DAOContrato implements DAOUtilsI {
         sprintf(SQLContrato.SELECT_STATUS_PACELAS, [id]));
 
     for (Map<String, dynamic> map in listStatusParcela) {
-      if (map['status'] == "EM ABERTO") return false;
+      if (!map['paga']) return false;
     }
     return true;
   }
@@ -180,7 +178,7 @@ class DAOContrato implements DAOUtilsI {
   /// deleta um contrato por id caso não haja parcelas em aberto
   Future<bool> delete(String idContrato) async {
     try {
-      if (await UtilsGeral.isContractExists(idContrato)) {
+      if (await UtilsGeral.isNotContractExists(idContrato)) {
         throw ContractException();
       }
 

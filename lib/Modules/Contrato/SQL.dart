@@ -11,7 +11,7 @@ abstract class SQLContrato {
       _ID_CLIENTE = "id_cliente",
       _VALOR_UNIT_BY_PRODUTO = "produto.valor_unit",
       _PORC_LUCRO_BY_PRODUTO = "produto.porc_lucro",
-      _STATUS_BY_PACELA = "parcela.status",
+      _STATUS_BY_PACELA = "parcela.paga",
       _ID_CONTRATO_BY_PARCELA = "parcela.id_contrato",
       _NUM_PARCLS = "num_parcelas",
       _VALOR = "valor",
@@ -30,19 +30,17 @@ abstract class SQLContrato {
           $_PARCELAS_DEFINIDAS BOOL DEFAULT FALSE,
           ${SQLGeral.ATIVO_QUERY});""",
       SELECT_ALL = SQLGeral.selectAll(NAME_TABLE),
-      SELECT_BY_ID = "$SELECT_ALL WHERE ${SQLGeral.ID} = %s;",
+      _SELECT_ID_CLIENTE_BY_CPF = """SELECT ${SQLGeral.ID} 
+      FROM ${SQLCliente.NAME_TABLE} WHERE $_CLIENTE_CPF ILIKE '%s'""",
+      SELECT_BY_SEARCH = """$SELECT_ALL WHERE (${SQLGeral.ID} = %s) 
+                            OR ($_ID_CLIENTE IN ($_SELECT_ID_CLIENTE_BY_CPF));""",
       SELECT_VAL_PORC_LUCRO_PRODUTO = """SELECT $_VALOR_UNIT_BY_PRODUTO,
           $_PORC_LUCRO_BY_PRODUTO FROM ${SQLProduto.NAME_TABLE} 
           WHERE ${SQLGeral.ID} = %s;""",
       SELECT_STATUS_PACELAS = """SELECT $_STATUS_BY_PACELA FROM $NAME_TABLE 
           INNER JOIN ${SQLParcela.NAME_TABLE} 
           ON $_ID_CONTRATO_BY_PARCELA = %s;""",
-      _SELECT_ID_CLIENTE_BY_CPF = """SELECT ${SQLGeral.ID} 
-      FROM ${SQLCliente.NAME_TABLE} WHERE $_CLIENTE_CPF ILIKE '%s'""",
-      SELECT_BY_CPF_CLIENTE = """${SQLGeral.selectAll(NAME_TABLE)} 
-          WHERE $_ID_CLIENTE IN ($_SELECT_ID_CLIENTE_BY_CPF);""",
-      CREATE =
-          """INSERT INTO $NAME_TABLE ($_ID_CLIENTE, $_NUM_PARCLS, 
+      CREATE = """INSERT INTO $NAME_TABLE ($_ID_CLIENTE, $_NUM_PARCLS, 
           $_VALOR, $_DESCRICAO) VALUES (%s ,%s,%s,'%s')""",
       DELETE = SQLGeral.deleteSQL(NAME_TABLE, SQLGeral.ID);
 
@@ -52,11 +50,11 @@ abstract class SQLContrato {
         _DESCRICAO,
         _ITENS_PRODUTO
       ],
-
       autoItens = [
-        SQLGeral.ID, 
-        _DATA_CRIACAO, 
-        _VALOR, SQLGeral.ATIVO,
-         _PARCELAS_DEFINIDAS
-     ];
+        SQLGeral.ID,
+        _DATA_CRIACAO,
+        _VALOR,
+        SQLGeral.ATIVO,
+        _PARCELAS_DEFINIDAS
+      ];
 }

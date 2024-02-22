@@ -13,22 +13,13 @@ class ClienteHandlerController implements ServerUtils {
     final router = Router();
 
     /// rota get sem parâmetro
-    router.get('/',
-        (Request request) async {
-          String ? search = request.url.queryParameters['search'];
-
-          int ? id = search !=null ? int.tryParse(search):null;
-
-          if (search != null && id == null){
-            if (search.length>=4 && search.contains(".") || search.contains("-")) {
-              return ResponseUtils.getResponse(await DAOCliente().getByCPF(search));
-            }
-            return ResponseUtils.getResponse(await DAOCliente().getByName(search));
-          }
-          return search == null ? ResponseUtils.getResponse(await DAOCliente().getAll()):
-          ResponseUtils.getResponse(await DAOCliente().getByID(id.toString()));
-        });
-
+    router.get('/', (Request request) async {
+      String? search = request.url.queryParameters['search'];
+      return search == null
+          ? ResponseUtils.getResponse(await DAOCliente().getAll())
+          : ResponseUtils.getResponse(
+              await DAOCliente().getBySearch(search));
+    });
 
     /// rota post
     router.post('/', (Request request) async {
@@ -39,28 +30,26 @@ class ClienteHandlerController implements ServerUtils {
             : Response.internalServerError(
                 body: "Erro durante o cadastro detectado!");
       } on PgException catch (e) {
-        if (e.message
-          .contains("duplicar valor da chave viola a restrição de unicidade")) {
-            return Response.badRequest(
-            body: "Opa, Já existe um cliente com o mesmo CPF que o seu!");
+        if (e.message.contains(
+            "duplicar valor da chave viola a restrição de unicidade")) {
+          return Response.badRequest(
+              body: "Opa, Já existe um cliente com o mesmo CPF que o seu!");
         }
 
         if (e.message
-          .contains("valor é muito longo para tipo character varying(14)")) {
-            return Response.badRequest(
-            body: "Opa, o cpf adicionado é maior que o permitido!");
+            .contains("valor é muito longo para tipo character varying(14)")) {
+          return Response.badRequest(
+              body: "Opa, o cpf adicionado é maior que o permitido!");
         }
 
-         return Response.badRequest(
-            body: "Erro inesperado na query => $e");
-        
-      }on ReactiveException{
+        return Response.badRequest(body: "Erro inesperado na query => $e");
+      } on ReactiveException {
         return Response.ok("Cliente inativo ativado. "
             "Isso ocorreu porque já existia um cliente inativo com esse cpf na base!");
       } on NullException {
         return Response.badRequest(
-            body:
-                ResponseUtils.requeredItensMessage(DAOCliente().requeredItens(), map));
+            body: ResponseUtils.requeredItensMessage(
+                DAOCliente().requeredItens(), map));
       } on IDException {
         return Response.badRequest(
             body: "O ID é adicionado automaticamente, por isso "

@@ -11,21 +11,19 @@ import '../../Service/exceptions.dart';
 
 class ProdutoControllerHandler implements ServerUtils {
   @override
-  // TODO: implement router
   Router get router {
     final route = Router();
 
     /// rota get sem parâmetro
     route.get("/", (Request request) async {
-      String ? search = request.url.queryParameters['search'];
 
-      int ? id = search !=null ? int.tryParse(search):null;
+      String? search = request.url.queryParameters['search'];
 
-      if (search != null && id == null){
-        return ResponseUtils.getResponse(await DAOProduto().getByName(search));
-      }
-      return search == null ? ResponseUtils.getResponse(await DAOProduto().getAll()):
-      ResponseUtils.getResponse(await DAOProduto().getByID(id.toString()));
+      return search == null
+          ? ResponseUtils.getResponse(await DAOProduto().getAll())
+          : ResponseUtils.getResponse(
+              await DAOProduto().getBySearch(search));
+
     });
 
     // rota post
@@ -39,7 +37,7 @@ class ProdutoControllerHandler implements ServerUtils {
       } on PgException {
         return Response.badRequest(
             body: "Opa, Já existe um produto com o mesmo nome!");
-      }on ReactiveException{
+      } on ReactiveException {
         return Response.ok("Produto inativo ativado. "
             "Isso ocorreu porque já existia um produto inativo com o mesmo nome na base!");
       } on NullException {
@@ -66,8 +64,8 @@ class ProdutoControllerHandler implements ServerUtils {
             : Response.internalServerError(body: "Falha no update!");
       } on PgException {
         return Response.badRequest(
-          body: "Já existe um produto com o mesmo nome da sua alteração na base!"
-        );
+            body:
+                "Já existe um produto com o mesmo nome da sua alteração na base!");
       } on IDException {
         return Response.badRequest(
             body:

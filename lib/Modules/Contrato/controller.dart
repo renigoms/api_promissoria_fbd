@@ -14,44 +14,38 @@ class ContratoHandlerController implements ServerUtils {
     final route = Router();
 
     route.get("/", (Request request) async {
-          String ? search = request.url.queryParameters['search'];
+      String? search = request.url.queryParameters['search'];
 
-          int ? id = search !=null ? int.tryParse(search):null;
-
-          if (search != null && id == null){
-            if (search.length>=4 && search.contains(".") || search.contains("-")) {
-              return ResponseUtils.getResponse(await DAOContrato().getByClienteCPF(search));
-            }
-          }
-          return search == null ? ResponseUtils.getResponse(await DAOContrato().getAll()):
-          ResponseUtils.getResponse(await DAOContrato().getByID(id.toString()));
-        });
-
-
+      return search == null
+          ? ResponseUtils.getResponse(await DAOContrato().getAll())
+          : ResponseUtils.getResponse(
+              await DAOContrato().getBySearch(search));
+    });
 
     /// rota post
     route.post("/", (Request request) async {
       final map = ResponseUtils.dadosReqMap(await request.readAsString());
       try {
-
         if (UtilsGeral.isAutoItensNotNull(map, DAOContrato().autoItens())) {
           throw AutoValueException();
         }
 
-        if (UtilsGeral.isRequeredItensNull(map, DAOContrato().requeredItens())) {
-            throw NullException();
+        if (UtilsGeral.isRequeredItensNull(
+            map, DAOContrato().requeredItens())) {
+          throw NullException();
         }
 
-        return await DAOContrato()
-                .postCreate(Contrato.byMap(map))
+        return await DAOContrato().postCreate(Contrato.byMap(map))
             ? Response.ok("Contrato gerado com sucesso!")
             : Response.internalServerError(body: "Erro ao gerar contrato!");
       } on NullException {
         return Response.badRequest(
-            body: ResponseUtils.requeredItensMessage(DAOContrato().requeredItens(), map));
+            body: ResponseUtils.requeredItensMessage(
+                DAOContrato().requeredItens(), map));
       } on AutoValueException {
         return Response.badRequest(
-            body: ResponseUtils.autoItensMessage(DAOContrato().autoItens(), map));
+            body:
+                ResponseUtils.autoItensMessage(DAOContrato().autoItens(), map));
       } on ProductException {
         return Response.badRequest(
             body: "O produto selecionado não existe na base!");
@@ -64,14 +58,13 @@ class ContratoHandlerController implements ServerUtils {
     });
 
     /// rota delete
-    route.
-    delete("/<id>", (Request request, String id) async {
+    route.delete("/<id>", (Request request, String id) async {
       try {
         return await DAOContrato().delete(id)
             ? Response.ok("Contrato e parcelas deletadas")
             : Response.internalServerError(
                 body: "Erro durante a tentativa de delete");
-      }on ForeingKeyException{
+      } on ForeingKeyException {
         return Response.badRequest(
             body: "Algumas parcelas ainda estão ativas nesse contrato!");
       } on IDException {
@@ -83,7 +76,7 @@ class ContratoHandlerController implements ServerUtils {
       } on ContractException {
         return Response.badRequest(
             body: "O contrato selecionado não existe na base!");
-      }catch (e) {
+      } catch (e) {
         return Response.badRequest(body: "Erro ao deletar: $e");
       }
     });

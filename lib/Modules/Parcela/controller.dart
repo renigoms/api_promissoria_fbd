@@ -29,17 +29,14 @@ class ParcelaHandlerController implements ServerUtils {
     });
 
     /// update pelo id do contrato e a data de pagamento
-    route.put('/', (Request request) async {
+    route.put('/<id_contrato>/data_pag/<data_pag>', (Request request, String idContrato, String dataPag) async {
       try {
-        String ? idContrato = request.url.queryParameters['id_contrato'],
-        
-        dataPag = request.url.queryParameters['data_pag'];
 
         return await DAOParcela().putUpdate(
                 Parcela.byMap(
                     ResponseUtils.dadosReqMap(await request.readAsString())),
-                idContrato!,
-                dataPag!)
+                idContrato,
+                dataPag)
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
       } on NoAlterException {
