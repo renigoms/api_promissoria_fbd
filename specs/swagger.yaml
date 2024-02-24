@@ -1,0 +1,164 @@
+openapi: 3.0.0
+info:
+  description: "API Promissoria FBD"
+  version: "1.0.0"
+  title: "API Promissoria FBD"
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+paths:
+  /cliente/:
+    get:
+      tags:
+        - 'Cliente'
+      summary: get all cliete or by search
+      parameters:
+      - name: search
+        in: query
+        description: "get by query paramenters"
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ""
+          content:
+            "*/*":
+                schema:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/cliente'
+        '500':
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/BackendExceptions'
+  
+    post:
+      tags:
+        - "Cliente"
+      summary: create new client
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/clienteCreate'
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+                schema:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/clienteCreate'
+        '400':
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/BackendExceptions'
+  /cliente/{id}:
+    put:
+      tags:
+        - "Cliente"
+      summary: Update Client
+      parameters:
+      - name: id
+        in: path
+        description: "put by id"
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/clienteCreate'
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+                schema:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/clienteCreate'
+        '400':
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/BackendExceptions'
+    
+    delete:
+      tags:
+        - 'Cliente'
+      summary: delete client by id
+      parameters:
+      - name: id
+        in: path
+        description: "delete by id"
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ""
+          content:
+           aplication/json:
+                schema:
+                  type: object
+                  properties:
+                    message: 
+                      type: string
+        '500':
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/BackendExceptions'
+
+
+
+
+
+components:
+  schemas:
+    cliente:
+      type: object
+      properties: 
+        id: 
+          type: integer
+        nome_completo:
+          type: string
+        cpf:
+          type: string
+        email:
+          type: string
+        telefone:
+          type: string
+        ativo:
+          type: boolean
+    
+    clienteCreate:
+      type: object
+      properties:
+        nome_completo:
+            type: string
+        cpf:
+          type: string
+        email:
+          type: string
+        telefone:
+          type: string
+
+    BackendExceptions:
+      type: object
+      properties:
+        error:
+          type: string
+      
+      
