@@ -13,6 +13,7 @@ dependencies:
   postgres: ^3.0.3
   shelf: ^1.4.1
   shelf_router: ^1.1.4
+  shelf_swagger_ui: ^1.0.0+2
   sprintf: ^7.0.0
   # path: ^1.8.0
 
