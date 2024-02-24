@@ -16,7 +16,7 @@
 
 *<p>Obs: Essa é uma api local então você deve rodar a aplicação primeiro para que  o link acima funcione corretamente.</p>*
 
-![Alt](image\image_swagger.png)
+<img src="image\image_swagger.png" alt="swagger image">
 
 ## Autor
 * Renan Nicolau Gomes
