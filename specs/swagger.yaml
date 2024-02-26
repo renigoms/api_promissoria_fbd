@@ -24,10 +24,8 @@ paths:
         '200':
           description: ""
           content:
-            "*/*":
+            aplication/json:
                 schema:
-                  type: array
-                  items: 
                     $ref: '#/components/schemas/cliente'
         '500':
           description: ""
@@ -114,12 +112,290 @@ paths:
                   properties:
                     message: 
                       type: string
-        '500':
+        '400':
           description: ""
           content:
             aplication/json:
               schema:
                 $ref: '#/components/schemas/BackendExceptions'
+  /produto/:
+    get:
+      tags:
+        - "Produto"
+      summary: get all or by search
+      parameters:
+        - name: search
+          in: query
+          description: "get by query paramenters"
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/produto"
+        "400":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/BackendExceptions"
+    post:
+      tags:
+        - "Produto"
+      summary: create new product
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              $ref: "#/components/schemas/produtoCreate"
+      responses:
+        "200":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/produtoCreate"
+        '400':
+            description: ""
+            content:
+              aplication/json:
+                schema:
+                  $ref: '#/components/schemas/BackendExceptions'
+  /produto/{id}:
+    put:
+      tags:
+        - "Produto"
+      summary: update product
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              $ref: "#/components/schemas/produtoCreate"
+      responses:
+        "200":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/produtoCreate"
+        '400':
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/BackendExceptions'
+    delete:
+      tags:
+        - 'Produto'
+      summary: delete product by id
+      parameters:
+        - name: id
+          in: path
+          description: "delete by id"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/BackendExceptions'
+
+  /contrato/:
+    get:
+      tags:
+        - "Contrato"
+      summary: get all or by search
+      parameters:
+        - name: search
+          in: query
+          description: "get by query paramenters"
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/contrato"
+        "400":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/BackendExceptions"
+    post:
+      tags:
+        - "Contrato"
+      summary: create new contrato
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              $ref: "#/components/schemas/contratoCreate"
+      responses:
+        "200":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/contratoCreate"
+        "400":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/BackendExceptions"
+  /contrato/{id}:
+    delete:
+      tags:
+        - "Contrato"
+      summary: delete by id
+      parameters:
+        - name: id
+          in: path
+          description: "delete by id"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/BackendExceptions"
+
+  /item_produto/{id_contrato}:
+    get:
+      tags:
+        - "Item Produto"
+      summary: get contract items by id_contract
+      parameters:
+        - name: id_contrato
+          in: path
+          description: "get by id_contrato"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/itemProduto"
+        "400":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/BackendExceptions"
+
+  /parcela/:
+    get:
+      tags:
+        - "Parcela"
+      summary: parcelas by id_contrato or id_contrato and data_pag
+      parameters:
+        - name: id_contrato
+          in: query
+          description: "get by query paramenters"
+          required: true
+          schema:
+            type: string
+        - name: data_pag
+          in: query
+          description: "get by query paramenters"
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/parcela"
+        "400":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/BackendExceptions"
+  /parcela/{id_contrato}/data_pag/{datapag}:
+    put:
+      tags:
+        - "Parcela"
+      summary: update paga
+      parameters:
+        - name: id_contrato
+          in: path
+          description: "add id_contrato"
+          required: true
+          schema:
+            type: string
+        - name: data_pag
+          in: query
+          description: "add data_pag"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              $ref: "#/components/schemas/parcelaPagaPut"
+      responses:
+        "200":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/parcela"
+        "400":
+          description: ""
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/BackendExceptions"
+
+
+
 
 
 
@@ -154,6 +430,104 @@ components:
           type: string
         telefone:
           type: string
+
+    produto:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        unid_medida:
+          type: string
+        valor_unit:
+          type: number
+        porc_lucro:
+          type: number
+        ativo:
+          type: boolean
+
+    produtoCreate:
+      type: object
+      properties:
+        nome:
+          type: string
+        unid_medida:
+          type: string
+        valor_unit:
+          type: number
+        porc_lucro:
+          type: number
+
+    contrato:
+      type: object
+      properties:
+        id:
+          type: integer
+        id_cliente:
+          type: integer
+        num_parcelas:
+          type: integer
+        data_criacao:
+          type: string
+        valor:
+          type: number
+        descricao:
+          type: string
+        parcelas_definidas:
+          type: boolean
+        ativo:
+          type: boolean
+
+    contratoCreate:
+      type: object
+      properties:
+        id_cliente:
+          type: integer
+        itens_produto:
+          type: array
+          items:
+            type: integer
+        num_parcelas:
+          type: integer
+        descricao:
+          type: string
+
+    itemProduto:
+      type: object
+      properties:
+        id:
+          type: integer
+        id_contrato:
+          type: integer
+        id_produto:
+          type: integer
+        valor_venda:
+          type: number
+        ativo:
+          type: boolean
+
+    parcela:
+      type: object
+      properties:
+        id:
+          type: integer
+        id_contrato:
+          type: integer
+        valor:
+          type: number
+        data_pag:
+          type: string
+        paga:
+          type: boolean
+        ativo:
+          type: boolean
+
+    parcelaPagaPut:
+      type: object
+      properties:
+        paga:
+          type: boolean
 
     BackendExceptions:
       type: object

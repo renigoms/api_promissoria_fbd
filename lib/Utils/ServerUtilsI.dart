@@ -33,15 +33,25 @@ abstract class ResponseUtils {
       List<String> listRequered, Map<String, dynamic> jsonRequest) {
     List itens = [null, "", 0, 0.0];
     for (var camp in listRequered) {
-      if (itens.contains(jsonRequest[camp])) return "O campo $camp é obrigatório !";
+      if (itens.contains(jsonRequest[camp])) {
+        return "O campo $camp é obrigatório !";
+      }
     }
     return "Campo diferente dos aceitos pelo sistema detectado!";
   }
+
   static String autoItensMessage(
       List<String> listRequered, Map<String, dynamic> jsonRequest) {
     for (String camp in listRequered) {
-      if (jsonRequest[camp] != null) return "O campo $camp é definido automaticamente. Sua adição manual não é permitida !";
+      if (jsonRequest[camp] != null) {
+        return "O campo $camp é definido automaticamente. Sua adição manual não é permitida !";
+      }
     }
     return "Campo diferente dos aceitos pelo sistema detectado!";
   }
+
+  static Response getBadResponse(String message) =>
+    Response.badRequest(
+            body: jsonEncode({"error": message}),
+                headers: {'Content-Type': 'application/json'});
 }

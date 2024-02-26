@@ -35,22 +35,18 @@ class ProdutoControllerHandler implements ServerUtils {
             : Response.internalServerError(
                 body: "Erro durante o cadastro detectado!");
       } on PgException {
-        return Response.badRequest(
-            body: "Opa, Já existe um produto com o mesmo nome!");
+        return ResponseUtils.getBadResponse("Opa, Já existe um produto com o mesmo nome!");
       } on ReactiveException {
         return Response.ok("Produto inativo ativado. "
             "Isso ocorreu porque já existia um produto inativo com o mesmo nome na base!");
       } on NullException {
-        return Response.badRequest(
-            body: ResponseUtils.requeredItensMessage(
-                DAOProduto().requeredItens(), map));
+        return ResponseUtils.getBadResponse(ResponseUtils.requeredItensMessage(
+            DAOProduto().requeredItens(), map));
       } on IDException {
-        return Response.badRequest(
-            body: "O ID é adicionado automaticamente, por isso "
-                "sua adição manual não é permitida!");
+        return ResponseUtils.getBadResponse("O ID é adicionado automaticamente, por isso "
+            "sua adição manual não é permitida!");
       } catch (e) {
-        return Response.badRequest(
-            body: "Erro durante o cadastro do produto: $e");
+        return ResponseUtils.getBadResponse("Erro durante o cadastro do produto: $e");
       }
     });
     //  rota put por id
@@ -63,20 +59,15 @@ class ProdutoControllerHandler implements ServerUtils {
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
       } on PgException {
-        return Response.badRequest(
-            body:
-                "Já existe um produto com o mesmo nome da sua alteração na base!");
+        return ResponseUtils.getBadResponse("Já existe um produto com o mesmo nome da sua alteração na base!");
       } on IDException {
-        return Response.badRequest(
-            body:
-                "O id deve ser passado junto com os dados que serão alterados");
+        return ResponseUtils.getBadResponse("O id deve ser passado junto com os dados que serão alterados");
       } on NoAlterException {
-        return Response.badRequest(body: "O id não pode ser alterado!");
+        return ResponseUtils.getBadResponse("O id não pode ser alterado!");
       } on ProductException {
-        return Response.badRequest(
-            body: "O produto selecionado não existe na base!");
+        return ResponseUtils.getBadResponse("O produto selecionado não existe na base!");
       } catch (e) {
-        return Response.badRequest(body: "Falha no update: $e");
+        return ResponseUtils.getBadResponse("Falha no update: $e");
       }
     });
 
@@ -87,17 +78,14 @@ class ProdutoControllerHandler implements ServerUtils {
             ? Response.ok("Produto deletado com sucesso!")
             : Response.internalServerError(body: "Tentativa de delete falhou!");
       } on IDException {
-        return Response.badRequest(
-            body: "Você precisa fornecer o ID do produto que quer deletar!");
+        return ResponseUtils.getBadResponse("Você precisa fornecer o ID do produto que quer deletar!");
       } on ForeingKeyException {
-        return Response.badRequest(
-            body: "Não foi possível excluir o seguinte produto, pois ele faz "
-                "parte de um ou mais contratos ativos!");
+        return ResponseUtils.getBadResponse("Não foi possível excluir o seguinte produto, pois ele faz "
+            "parte de um ou mais contratos ativos!");
       } on ProductException {
-        return Response.badRequest(
-            body: "O produto selecionado não existe na base!");
+        return ResponseUtils.getBadResponse("O produto selecionado não existe na base!");
       } catch (e) {
-        return Response.badRequest(body: "Tentativa de delete falhou: $e");
+        return ResponseUtils.getBadResponse("Tentativa de delete falhou: $e");
       }
     });
 

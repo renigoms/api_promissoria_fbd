@@ -17,8 +17,7 @@ class ClienteHandlerController implements ServerUtils {
       String? search = request.url.queryParameters['search'];
       return search == null
           ? ResponseUtils.getResponse(await DAOCliente().getAll())
-          : ResponseUtils.getResponse(
-              await DAOCliente().getBySearch(search));
+          : ResponseUtils.getResponse(await DAOCliente().getBySearch(search));
     });
 
     /// rota post
@@ -32,31 +31,30 @@ class ClienteHandlerController implements ServerUtils {
       } on PgException catch (e) {
         if (e.message.contains(
             "duplicar valor da chave viola a restrição de unicidade")) {
-          return Response.badRequest(
-              body: "Opa, Já existe um cliente com o mesmo CPF que o seu!");
+          return ResponseUtils.getBadResponse(
+              "Opa, Já existe um cliente com o mesmo CPF que o seu!");
         }
 
         if (e.message
             .contains("valor é muito longo para tipo character varying(14)")) {
-          return Response.badRequest(
-              body: "Opa, o cpf adicionado é maior que o permitido!");
+          return ResponseUtils.getBadResponse(
+              "Opa, o cpf adicionado é maior que o permitido!");
         }
 
-        return Response.badRequest(body: "Erro inesperado na query => $e");
+        return ResponseUtils.getBadResponse("Erro inesperado na query => $e");
       } on ReactiveException {
         return Response.ok("Cliente inativo ativado. "
             "Isso ocorreu porque já existia um cliente inativo com esse cpf na base!");
       } on NullException {
-        return Response.badRequest(
-            body: ResponseUtils.requeredItensMessage(
-                DAOCliente().requeredItens(), map));
+        return ResponseUtils.getBadResponse(ResponseUtils.requeredItensMessage(
+            DAOCliente().requeredItens(), map));
       } on IDException {
-        return Response.badRequest(
-            body: "O ID é adicionado automaticamente, por isso "
-                "sua adição manual não é permitida!");
+        return ResponseUtils.getBadResponse(
+            """O ID é adicionado automaticamente, por isso 
+                sua adição manual não é permitida!""");
       } catch (e) {
-        return Response.badRequest(
-            body: "Erro durante o cadastro do cliente: $e");
+        return ResponseUtils.getBadResponse(
+            "Erro durante o cadastro do cliente: $e");
       }
     });
 
@@ -70,17 +68,16 @@ class ClienteHandlerController implements ServerUtils {
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
       } on IDException {
-        return Response.badRequest(
-            body:
-                "O id deve ser passado junto com os dados que serão alterados");
+        return ResponseUtils.getBadResponse(
+            "O id deve ser passado junto com os dados que serão alterados");
       } on NoAlterException {
-        return Response.badRequest(
-            body: "O id do cliente não pode ser alterado!");
+        return ResponseUtils.getBadResponse(
+            "O id do cliente não pode ser alterado!");
       } on ClientException {
-        return Response.badRequest(
-            body: "O cliente selecionado não existe na base!");
+        return ResponseUtils.getBadResponse(
+            "O cliente selecionado não existe na base!");
       } catch (e) {
-        return Response.badRequest(body: "Falha no update: $e");
+        return ResponseUtils.getBadResponse("Falha no update: $e");
       }
     });
 
@@ -91,17 +88,16 @@ class ClienteHandlerController implements ServerUtils {
             ? Response.ok("Cliente deletado com sucesso!")
             : Response.internalServerError(body: "Tentativa de delete falhou!");
       } on IDException {
-        return Response.badRequest(
-            body: "Você precisa fornecer o ID do cliente que quer deletar");
+        return ResponseUtils.getBadResponse(
+            "Você precisa fornecer o ID do cliente que quer deletar");
       } on ForeingKeyException {
-        return Response.badRequest(
-            body:
-                "Não foi possível excluir o cliente, pois ele possui um ou mais contratos ativos");
+        return ResponseUtils.getBadResponse(
+            "Não foi possível excluir o cliente, pois ele possui um ou mais contratos ativos");
       } on ClientException {
-        return Response.badRequest(
-            body: "O cliente selecionado não existe na base!");
+        return ResponseUtils.getBadResponse(
+            "O cliente selecionado não existe na base!");
       } catch (e) {
-        return Response.badRequest(body: "Tentativa de delete Falhou: $e");
+        return ResponseUtils.getBadResponse("Tentativa de delete Falhou: $e");
       }
     });
     return router;
