@@ -22,6 +22,8 @@
 ### Sobres os Endpoints de PUT
 * Onde houver ocorrencia de PUT, não é necessários alterar todos os itens dipostos de uma vez, apesar de isso ser possivel, ou seja, você é livre para alterar só o nome do produto ou só nome do cliente por exemplo. Isso não se aplica ao PUT presente na parcela onde você poderar alterar somente e apenas o booleano caso a parcela tenha sido paga.
 
+### Sobre os Endpoints de POST
+* **Produto:** No post de produto a chave porc_lucro tem como valor default *0.3* caso ele não seja referenciado no momento da criação do produto.
 ## Link para Documentação 
 * [Link da Documentação em Swagger](http://localhost:8080/documentation/)
 
