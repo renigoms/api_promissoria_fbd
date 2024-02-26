@@ -172,6 +172,13 @@ paths:
       tags:
         - "Produto"
       summary: update product
+      parameters:
+        - name: id
+          in: path
+          description: "put by id"
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           aplication/json:
@@ -355,7 +362,7 @@ paths:
             aplication/json:
               schema:
                 $ref: "#/components/schemas/BackendExceptions"
-  /parcela/{id_contrato}/data_pag/{datapag}:
+  /parcela/{id_contrato}/data_pag/{data_pag}:
     put:
       tags:
         - "Parcela"
@@ -368,7 +375,7 @@ paths:
           schema:
             type: string
         - name: data_pag
-          in: query
+          in: path
           description: "add data_pag"
           required: true
           schema:
@@ -384,7 +391,7 @@ paths:
           content:
             aplication/json:
               schema:
-                type: object
+                type: array
                 items:
                   $ref: "#/components/schemas/parcela"
         "400":
