@@ -39,21 +39,16 @@ class ContratoHandlerController implements ServerUtils {
             ? Response.ok("Contrato gerado com sucesso!")
             : Response.internalServerError(body: "Erro ao gerar contrato!");
       } on NullException {
-        return Response.badRequest(
-            body: ResponseUtils.requeredItensMessage(
-                DAOContrato().requeredItens(), map));
+        return ResponseUtils.getBadResponse(ResponseUtils.requeredItensMessage(
+            DAOContrato().requeredItens(), map));
       } on AutoValueException {
-        return Response.badRequest(
-            body:
-                ResponseUtils.autoItensMessage(DAOContrato().autoItens(), map));
+        return ResponseUtils.getBadResponse(ResponseUtils.autoItensMessage(DAOContrato().autoItens(), map));
       } on ProductException {
-        return Response.badRequest(
-            body: "O produto selecionado não existe na base!");
+        return ResponseUtils.getBadResponse("O produto selecionado não existe na base!");
       } on ClientException {
-        return Response.badRequest(
-            body: "O cliente selecionado não existe na base!");
+        return ResponseUtils.getBadResponse("O cliente selecionado não existe na base!");
       } catch (e) {
-        return Response.badRequest(body: "Erro ao gerar contrato: $e");
+        return ResponseUtils.getBadResponse("Erro ao gerar contrato: $e");
       }
     });
 
@@ -65,19 +60,15 @@ class ContratoHandlerController implements ServerUtils {
             : Response.internalServerError(
                 body: "Erro durante a tentativa de delete");
       } on ForeingKeyException {
-        return Response.badRequest(
-            body: "Algumas parcelas ainda estão ativas nesse contrato!");
+        return ResponseUtils.getBadResponse("Algumas parcelas ainda estão ativas nesse contrato!");
       } on IDException {
-        return Response.badRequest(
-            body: "Você precisa fornecer o ID do produto que quer deletar!");
+        return ResponseUtils.getBadResponse("Você precisa fornecer o ID do produto que quer deletar!");
       } on OpenInstallmentsException {
-        return Response.badRequest(
-            body: "Ainda existem parcelas em aberto nesse contrato!");
+        return ResponseUtils.getBadResponse("Ainda existem parcelas em aberto nesse contrato!");
       } on ContractException {
-        return Response.badRequest(
-            body: "O contrato selecionado não existe na base!");
+        return ResponseUtils.getBadResponse("O contrato selecionado não existe na base!");
       } catch (e) {
-        return Response.badRequest(body: "Erro ao deletar: $e");
+        return ResponseUtils.getBadResponse("Erro ao deletar: $e");
       }
     });
 

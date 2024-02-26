@@ -11,6 +11,17 @@
 
 * **Descrição:** Trata-se de uma application programming interface (api) desenvolvido com o objetivo de ser um sistema de geração e controle de promissorias.
 
+## Observações Importantes
+### Endpoints de get:
+* `http://localhost/cliente/?search={id/cpf/nome}`
+* `http://localhost/produto/?search={id/nome}`
+* `http://localhost/contrato/?search={id/cpf_cliente}`
+### Sobre os parâmetros:
+* **Busca por partes:** O cpf e o nome do cliente não precisam ser postos inteiros para que a busca execute corretamente. Isto também ocorre com o nome do produto.
+
+### Sobres os Endpoints de PUT
+* Onde houver ocorrencia de PUT, não é necessários alterar todos os itens dipostos de uma vez, apesar de isso ser possivel, ou seja, você é livre para alterar só o nome do produto ou só nome do cliente por exemplo. Isso não se aplica ao PUT presente na parcela onde você poderar alterar somente e apenas o booleano caso a parcela tenha sido paga.
+
 ## Link para Documentação 
 * [Link da Documentação em Swagger](http://localhost:8080/documentation/)
 

@@ -40,22 +40,16 @@ class ParcelaHandlerController implements ServerUtils {
             ? Response.ok("Updates realizados com sucesso!")
             : Response.internalServerError(body: "Falha no update!");
       } on NoAlterException {
-        return Response.badRequest(
-            body: "Você deve alterar o status e somente o status");
+        return ResponseUtils.getBadResponse("Você deve alterar o status e somente o status");
       } on IDException {
-        return Response.badRequest(
-            body: "Você deve passar o id do contrato "
-                "e a data da parcela que deseja alterar");
+        return ResponseUtils.getBadResponse("Você deve passar o id do contrato "
+            "e a data da parcela que deseja alterar");
       } on ContractException {
-        return Response.badRequest(
-            body: "O contrato selecionado não existe na base!");
+        return ResponseUtils.getBadResponse("O contrato selecionado não existe na base!");
       } on ParcelaException {
-        return Response.badRequest(
-            body:
-                "Nesse contrato, não existe uma parcela com essa data especificada!");
+        return ResponseUtils.getBadResponse("Nesse contrato, não existe uma parcela com essa data especificada!");
       } catch (e) {
-        return Response.internalServerError(
-            body: "Erro ao tentar realizar as alterações solicitadas!");
+        return ResponseUtils.getBadResponse("Erro ao tentar realizar as alterações solicitadas!");
       }
     });
 
