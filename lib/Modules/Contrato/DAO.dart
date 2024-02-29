@@ -1,15 +1,15 @@
 // ignore_for_file: file_names
 
-import 'package:intl/intl.dart';
 import 'package:sistema_promissorias/Modules/Cliente/DAO.dart';
 import 'package:sistema_promissorias/Modules/Contrato/SQL.dart';
 import 'package:sistema_promissorias/Modules/Contrato/model.dart';
+import 'package:sistema_promissorias/Modules/Item_Produto/DAO.dart';
+import 'package:sistema_promissorias/Modules/Parcela/DAO.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
 import 'package:sistema_promissorias/Service/open_cursor.dart';
 import 'package:sistema_promissorias/Utils/DAOUtils.dart';
 import 'package:sprintf/sprintf.dart';
 
-import '../../Utils/SQLGeral.dart';
 import '../Item_Produto/SQL.dart';
 import '../Parcela/SQL.dart';
 
@@ -37,23 +37,10 @@ class DAOContrato implements DAOUtilsI {
 
   List<String> autoItens() => SQLContrato.autoItens;
 
-  Future<double> _getValorVendaPoduto({int? idProduto}) async {
-    if (idProduto != null) {
-      final map = await UtilsGeral.getSelectMapProduto(sprintf(
-          SQLContrato.SELECT_VAL_PORC_LUCRO_PRODUTO, [idProduto.toString()]));
-
-      double valorVenda =
-          (map[0]['valor_unit'] * map[0]['porc_lucro'] + map[0]['valor_unit']);
-
-      return valorVenda;
-    }
-    return 0;
-  }
-
   Future<double> _calcValorTotalContrato(
       {required List idsProduto, double somatorio = 0, int cont = 0}) async {
     try {
-      somatorio += await _getValorVendaPoduto(idProduto: idsProduto[cont]);
+      somatorio += await UtilsGeral.getValorVendaPoduto(idProduto: idsProduto[cont]);
       cont++;
     } on RangeError {
       return somatorio;
@@ -105,49 +92,17 @@ class DAOContrato implements DAOUtilsI {
           }
         }
 
-        int contSucessParcels = 0, contSucessItensProdut = 0;
-        /**
-         * Criação dos itens produto
-         */
+        int contSucessItensProdut = await DAOItemProduto().createItemProduto(
+            contrato.id_cliente!, contrato.itens_produto!, contratoMap);
 
-        for (int idProduto in contrato.itens_produto!) {
-          double valorVenda = await _getValorVendaPoduto(idProduto: idProduto);
-
-          if (await Cursor.execute(sprintf(SQLItemProduto.CREATE, [
-            contratoMap['id'].toString(),
-            idProduto.toString(),
-            valorVenda.toString()
-          ]))) contSucessItensProdut++;
-        }
-
-        /**
-         * Criação das parcelas
-         */
-
-        // data atual com salto de um mês
-        DateTime dateToday = DateTime(
-            DateTime.now().year, DateTime.now().month + 1, DateTime.now().day);
-
-        // calculo do valor de cada parcela
-        double valorParcela = valorContrato / contrato.num_parcelas!;
-
-        // Definição das parcelas de acordo com a quantidade definida no contrato
-        for (int i = 0; i < contrato.num_parcelas!; i++) {
-          if (await Cursor.execute(sprintf(SQLParcela.CREATE, [
-            contratoMap['id'].toString(),
-            valorParcela.toString(),
-            DateFormat("dd-MM-yyyy").format(dateToday)
-          ]))) contSucessParcels++;
-          dateToday =
-              DateTime(dateToday.year, dateToday.month + 1, dateToday.day);
-        }
+        int contSucessParcels = await DAOParcela().create_parcela(
+            valorContrato, contrato.num_parcelas!, contratoMap['id']);
 
         if (contSucessParcels == contrato.num_parcelas &&
             contSucessItensProdut == contrato.itens_produto!.length) {
           return await Cursor.execute(sprintf(
-              "UPDATE ${SQLContrato.NAME_TABLE} SET parcelas_definidas = TRUE "
-              "WHERE ${SQLGeral.ID}=%s;",
-              [contratoMap['id'].toString()]));
+              SQLContrato.DEFINIR_PARCELAS, [contratoMap['id'].toString()]
+          ));
         }
       }
 

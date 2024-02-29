@@ -42,6 +42,9 @@ abstract class SQLContrato {
           ON $_ID_CONTRATO_BY_PARCELA = %s;""",
       CREATE = """INSERT INTO $NAME_TABLE ($_ID_CLIENTE, $_NUM_PARCLS, 
           $_VALOR, $_DESCRICAO) VALUES (%s ,%s,%s,'%s')""",
+
+      DEFINIR_PARCELAS = """UPDATE ${SQLContrato.NAME_TABLE} SET $_PARCELAS_DEFINIDAS = TRUE WHERE ${SQLGeral.ID}=%s;""",
+
       DELETE = SQLGeral.deleteSQL(NAME_TABLE, SQLGeral.ID);
 
   static final List<String> requeredItens = [

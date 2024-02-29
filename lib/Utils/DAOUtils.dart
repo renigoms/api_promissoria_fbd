@@ -5,6 +5,7 @@ import 'package:sprintf/sprintf.dart';
 
 import '../Modules/Cliente/DAO.dart';
 import '../Modules/Contrato/DAO.dart';
+import '../Modules/Contrato/SQL.dart';
 import '../Modules/Contrato/model.dart';
 import '../Modules/Item_Produto/model.dart';
 import '../Modules/Produto/DAO.dart';
@@ -142,4 +143,17 @@ abstract class UtilsGeral {
   /// Adiciona % dos lados de %s
   static String addSides(String addItem, String textBase) =>
       addItem + textBase + addItem;
+
+  static Future<double> getValorVendaPoduto({int? idProduto}) async {
+    if (idProduto != null) {
+      final map = await UtilsGeral.getSelectMapProduto(sprintf(
+          SQLContrato.SELECT_VAL_PORC_LUCRO_PRODUTO, [idProduto.toString()]));
+
+      double valorVenda =
+      (map[0]['valor_unit'] * map[0]['porc_lucro'] + map[0]['valor_unit']);
+
+      return valorVenda;
+    }
+    return 0;
+  }
 }

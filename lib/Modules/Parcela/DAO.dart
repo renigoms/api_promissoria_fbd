@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'package:intl/intl.dart';
+import 'package:sistema_promissorias/Modules/Contrato/model.dart';
 import 'package:sistema_promissorias/Modules/Parcela/SQL.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
 import 'package:sistema_promissorias/Service/open_cursor.dart';
@@ -26,6 +28,33 @@ class DAOParcela {
           [idContrato, dataPag]));
 
   static List<String> autoItens() => SQLParcela.autoItens;
+
+  Future<int> create_parcela(double valorContrato, int num_parcelas, int id_contrato) async{
+    /**
+     * Criação das parcelas
+     */
+
+    int contSucessParcels = 0;
+
+    // data atual com salto de um mês
+    DateTime dateToday = DateTime(
+        DateTime.now().year, DateTime.now().month + 1, DateTime.now().day);
+
+    // calculo do valor de cada parcela
+    double valorParcela = valorContrato / num_parcelas;
+
+    // Definição das parcelas de acordo com a quantidade definida no contrato
+    for (int i = 0; i < num_parcelas; i++) {
+      if (await Cursor.execute(sprintf(SQLParcela.CREATE, [
+          id_contrato.toString(),
+        valorParcela.toString(),
+        DateFormat("dd-MM-yyyy").format(dateToday)
+        ]))) contSucessParcels++;
+        dateToday = DateTime(dateToday.year, dateToday.month + 1, dateToday.day);
+    }
+
+    return contSucessParcels;
+  }
 
   /// verifica a inexistência de atributos nulos em parcela exeto status
   bool _isPagaOnly(Parcela parcela) =>
