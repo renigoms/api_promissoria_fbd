@@ -44,7 +44,7 @@ class ClienteHandlerController implements ServerUtils {
         return ResponseUtils.getBadResponse("Erro inesperado na query => $e");
       } on ReactiveException {
         return Response.ok("Cliente inativo ativado. "
-            "Isso ocorreu porque já existia um cliente inativo com esse cpf na base!");
+              "Isso ocorreu porque já existia um cliente inativo com esse cpf na base!");
       } on NullException {
         return ResponseUtils.getBadResponse(ResponseUtils.requeredItensMessage(
             DAOCliente().requeredItens(), map));
