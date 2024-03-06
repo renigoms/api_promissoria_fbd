@@ -27,8 +27,8 @@ class DAOCliente implements DAOUtilsI {
     int id = int.tryParse(search) ?? 0;
     return UtilsGeral.getSelectMapCliente(sprintf(SQLCliente.SELECT_SEARCH, [
       id,
-      UtilsGeral.addSides("%", search),
-      UtilsGeral.addSides("%", search)
+      UtilsGeral.addSides(addItem: "%", textBase: search, ambosLados:false),
+      UtilsGeral.addSides(addItem: "%", textBase: search), id
     ]));
   }
 

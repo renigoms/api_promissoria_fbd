@@ -29,7 +29,8 @@ abstract class SQLCliente {
 
       SELECT_SEARCH = """$SELECT_ALL WHERE (${SQLGeral.ID} = %s) 
                           OR ($_CPF ILIKE '%s') 
-                          OR ($_NOME_COMPLETO ILIKE '%s');""",
+                          OR ($_NOME_COMPLETO ILIKE '%s')
+                          ORDER BY CASE WHEN ${SQLGeral.ID} = %s THEN 0 ELSE 1 END, ${SQLGeral.ID};""",
 
       SELECT_ID_CLIENTE_IN_CONTRATO = """SELECT $_CONTRATO_ID_CLIENTE FROM  
           ${SQLContrato.NAME_TABLE};""",

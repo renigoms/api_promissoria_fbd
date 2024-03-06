@@ -118,7 +118,8 @@ abstract class UtilsGeral {
     return getContrato.isEmpty;
   }
 
-  static Future<bool> isNotParcelaExists(String idContrato, String dataPag) async {
+  static Future<bool> isNotParcelaExists(
+      String idContrato, String dataPag) async {
     final getParcelela = await DAOParcela().getByDataPag(idContrato, dataPag);
     return getParcelela.isEmpty;
   }
@@ -141,8 +142,9 @@ abstract class UtilsGeral {
   }
 
   /// Adiciona % dos lados de %s
-  static String addSides(String addItem, String textBase) =>
-      addItem + textBase + addItem;
+  static String addSides(
+          {required addItem, required String textBase, ambosLados = true}) =>
+                ambosLados ? addItem + textBase + addItem: textBase + addItem;
 
   static Future<double> getValorVendaPoduto({int? idProduto}) async {
     if (idProduto != null) {
@@ -150,7 +152,7 @@ abstract class UtilsGeral {
           SQLContrato.SELECT_VAL_PORC_LUCRO_PRODUTO, [idProduto.toString()]));
 
       double valorVenda =
-      (map[0]['valor_unit'] * map[0]['porc_lucro'] + map[0]['valor_unit']);
+          (map[0]['valor_unit'] * map[0]['porc_lucro'] + map[0]['valor_unit']);
 
       return valorVenda;
     }
