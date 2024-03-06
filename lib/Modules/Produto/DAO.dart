@@ -26,7 +26,8 @@ class DAOProduto implements DAOUtilsI {
     int isNumID = int.tryParse(search) ?? 0;
 
     return UtilsGeral.getSelectMapProduto(sprintf(
-        SQLProduto.SELECT_SEARCH, [isNumID, UtilsGeral.addSides("%", search)]));
+        SQLProduto.SELECT_SEARCH, [isNumID, UtilsGeral.addSides(
+          addItem: "%", textBase: search)]));
   }
 
   @override

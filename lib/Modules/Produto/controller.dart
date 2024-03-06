@@ -37,8 +37,7 @@ class ProdutoControllerHandler implements ServerUtils {
       } on PgException {
         return ResponseUtils.getBadResponse("Opa, Já existe um produto com o mesmo nome!");
       } on ReactiveException {
-        return Response.ok("Produto inativo ativado. "
-            "Isso ocorreu porque já existia um produto inativo com o mesmo nome na base!");
+        return Response.ok("Produto Reativado !");
       } on NullException {
         return ResponseUtils.getBadResponse(ResponseUtils.requeredItensMessage(
             DAOProduto().requeredItens(), map));

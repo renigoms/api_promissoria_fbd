@@ -1,7 +1,6 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, non_constant_identifier_names
 
 import 'package:intl/intl.dart';
-import 'package:sistema_promissorias/Modules/Contrato/model.dart';
 import 'package:sistema_promissorias/Modules/Parcela/SQL.dart';
 import 'package:sistema_promissorias/Service/exceptions.dart';
 import 'package:sistema_promissorias/Service/open_cursor.dart';
@@ -29,10 +28,9 @@ class DAOParcela {
 
   static List<String> autoItens() => SQLParcela.autoItens;
 
-  Future<int> create_parcela(double valorContrato, int num_parcelas, int id_contrato) async{
-    /**
-     * Criação das parcelas
-     */
+    /// Criação das parcelas
+
+  Future<int> create_parcela(double valorContrato, int numParcelas, int idContrato) async{
 
     int contSucessParcels = 0;
 
@@ -41,12 +39,12 @@ class DAOParcela {
         DateTime.now().year, DateTime.now().month + 1, DateTime.now().day);
 
     // calculo do valor de cada parcela
-    double valorParcela = valorContrato / num_parcelas;
+    double valorParcela = valorContrato / numParcelas;
 
     // Definição das parcelas de acordo com a quantidade definida no contrato
-    for (int i = 0; i < num_parcelas; i++) {
+    for (int i = 0; i < numParcelas; i++) {
       if (await Cursor.execute(sprintf(SQLParcela.CREATE, [
-          id_contrato.toString(),
+          idContrato.toString(),
         valorParcela.toString(),
         DateFormat("dd-MM-yyyy").format(dateToday)
         ]))) contSucessParcels++;
